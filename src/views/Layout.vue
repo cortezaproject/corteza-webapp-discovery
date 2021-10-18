@@ -68,10 +68,7 @@
       <div
         class="d-flex flex-column w-100"
       >
-        <router-view
-          class="flex-grow-1 overflow-auto"
-        />
-
+        <search class="flex-grow-1 overflow-auto" />
         <portal-target
           name="report-toolbar"
         />
@@ -84,6 +81,7 @@
 <script>
 import icon from '../themes/corteza-base/img/icon.png'
 import logo from '../themes/corteza-base/img/logo.png'
+import Search from '../components/Search.vue'
 import { components } from '@cortezaproject/corteza-vue'
 const { CPermissionsModal, CTopbar, CSidebar } = components
 
@@ -92,6 +90,7 @@ export default {
     CPermissionsModal,
     CTopbar,
     CSidebar,
+    Search,
   },
 
   data () {
