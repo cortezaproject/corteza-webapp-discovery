@@ -1,21 +1,16 @@
 import Vue from 'vue'
+import { BootstrapVue, BootstrapVueIcons } from 'bootstrap-vue'
+import PortalVue from 'portal-vue'
+import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
 
-import BootstrapVue from 'bootstrap-vue'
-import Router from 'vue-router'
-import Vuex from 'vuex'
-import VueProgressBar from 'vue-progressbar'
-import vars from '../themes/corteza-base/variables.scss'
+import 'bootstrap/dist/css/bootstrap.css'
+import 'bootstrap-vue/dist/bootstrap-vue.css'
+import '../themes/faIcons'
 
 import { plugins } from '@cortezaproject/corteza-vue'
 
-import pairs from './eventbus-pairs'
-
-const notProduction = (process.env.NODE_ENV !== 'production')
-const verboseUIHooks = window.location.search.includes('verboseUIHooks')
-const verboseEventbus = window.location.search.includes('verboseEventbus')
-
-Vue.use(plugins.Auth(), { app: 'discovery' })
-
+Vue.use(PortalVue)
+Vue.component('font-awesome-icon', FontAwesomeIcon)
 Vue.use(BootstrapVue, {
   BToast: {
     // see https://bootstrap-vue.org/docs/components/toast#comp-ref-b-toast-props
@@ -23,28 +18,8 @@ Vue.use(BootstrapVue, {
     toaster: 'b-toaster-bottom-right',
   },
 })
-Vue.use(Router)
-Vue.use(Vuex)
-Vue.use(VueProgressBar, {
-  color: vars.primary,
-  failedColor: vars.danger,
-  thickness: '7px',
-})
-
-Vue.use(plugins.CortezaAPI('compose'))
+Vue.use(BootstrapVueIcons)
+Vue.use(plugins.Auth(), { app: 'discovery' })
 Vue.use(plugins.CortezaAPI('system'))
-Vue.use(plugins.CortezaAPI('federation'))
-Vue.use(plugins.CortezaAPI('automation'))
-
-Vue.use(plugins.EventBus(), {
-  strict: notProduction,
-  verbose: verboseEventbus,
-  pairs,
-})
-
-Vue.use(plugins.UIHooks(), {
-  app: 'discovery',
-  verbose: verboseUIHooks,
-})
-
+Vue.use(plugins.CortezaAPI('compose'))
 Vue.use(plugins.Settings, { api: Vue.prototype.$SystemAPI })

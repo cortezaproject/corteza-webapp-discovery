@@ -9,7 +9,7 @@ const routes = [
     path: '/',
     component: () => import('../views/Layout'),
   },
-  // When everything else fails, go to dashboard
+  { path: '*', redirect: { name: 'root' } },
 ]
 
 const router = new VueRouter({

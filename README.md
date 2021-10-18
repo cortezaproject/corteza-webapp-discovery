@@ -1,24 +1,24 @@
 <h1 align="center">
   <img width="300px" src=".github/assets/corteza_logo.svg" />
   <br />
-  <p>Corteza Webapp Admin</p>
+  <p>Corteza Webapp Discovery</p>
 
   <div align="center">
 
   [![DockerHub Downloads Card](https://img.shields.io/docker/pulls/cortezaproject/corteza-webapp)](https://img.shields.io/docker/pulls/cortezaproject/corteza-webapp)
-  [![Latest Version Card](https://img.shields.io/github/v/tag/cortezaproject/corteza-webapp-admin?label=stable%20version)](https://img.shields.io/github/v/tag/cortezaproject/corteza-webapp-admin?label=stable%20version)
-  [![License Card](https://img.shields.io/github/license/cortezaproject/corteza-webapp-admin)](https://img.shields.io/github/license/cortezaproject/corteza-webapp-admin)
+  [![Latest Version Card](https://img.shields.io/github/v/tag/cortezaproject/corteza-webapp-discovery?label=stable%20version)](https://img.shields.io/github/v/tag/cortezaproject/corteza-webapp-discovery?label=stable%20version)
+  [![License Card](https://img.shields.io/github/license/cortezaproject/corteza-webapp-discovery)](https://img.shields.io/github/license/cortezaproject/corteza-webapp-discovery)
 
   </div>
 </h1>
 
 <br />
 
-**Corteza webapp Admin** defines the **front-end** application used for system administration and monitoring.
+**Corteza webapp Discovery** is the **front-end** of the Corteza Search facility, allowing you to search Corteza and its data.
 The web application is based on [Vue.JS](https://vuejs.org/) for modern browsers.
 The communication between the front-end and the back-end occurs via the REST API and web sockets.
 
-Refer to the [Administrator Guide](https://docs.cortezaproject.org/corteza-docs/2021.6/administrator-guide/index.html) for details on how to use the web application.
+**DevNote**: expand
 
 <br />
 
@@ -59,7 +59,7 @@ Quick references:
 
 ## Upgrading Corteza
 
-[![Latest Version Card](https://img.shields.io/github/v/tag/cortezaproject/corteza-webapp-admin?label=latest%20stable%20version)](https://img.shields.io/github/v/tag/cortezaproject/corteza-webapp-admin?label=latest%20stable%20version)
+[![Latest Version Card](https://img.shields.io/github/v/tag/cortezaproject/corteza-webapp-discovery?label=latest%20stable%20version)](https://img.shields.io/github/v/tag/cortezaproject/corteza-webapp-discovery?label=latest%20stable%20version)
 
 Refer to the [changelog](https://docs.cortezaproject.org/corteza-docs/2021.6/changelog/index.html) and the [upgrade guide](https://docs.cortezaproject.org/corteza-docs/2021.6/upgrade-guide/index.html) to upgrade your Corteza instance.
 
@@ -78,7 +78,7 @@ Refer to the [Integrator Guide](https://docs.cortezaproject.org/corteza-docs/202
 
 Quick references:
 
-* [Corteza Compose configuration](https://docs.cortezaproject.org/corteza-docs/2021.6/integrator-guide/compose-configuration/index.html)
+* [Corteza Discovery configuration](https://docs.cortezaproject.org/corteza-docs/2021.6/integrator-guide/compose-configuration/index.html)
 * automation using [workflows](https://docs.cortezaproject.org/corteza-docs/2021.6/integrator-guide/workflows/index.html) and [automation scripts](https://docs.cortezaproject.org/corteza-docs/2021.6/integrator-guide/automation-scripts/index.html)
 * [using the REST API](https://docs.cortezaproject.org/corteza-docs/2021.6/integrator-guide/accessing-corteza/index.html),
 

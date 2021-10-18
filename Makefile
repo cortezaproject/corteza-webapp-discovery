@@ -24,7 +24,7 @@ test:
 	$(YARN) test:unit
 
 build:
-	$(YARN) build $(BUILD_FLAGS)
+	export BUILD_VERSION=${BUILD_VERSION} && $(YARN) build $(BUILD_FLAGS)
 
 release:
 	@ cp $(RELEASE_EXTRA_FILES) $(BUILD_DEST_DIR)

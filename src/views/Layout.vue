@@ -1,63 +1,57 @@
 <template>
   <div class="d-flex flex-column w-100 vh-100">
-    <header
-      class="mw-100"
-    >
+    <header>
       <c-topbar
         :sidebar-pinned="pinned"
         :labels="{
-          helpForum: $t('navigation.help.forum'),
-          helpDocumentation: $t('navigation.help.documentation'),
-          helpFeedback: $t('navigation.help.feedback'),
-          helpVersion: $t('navigation.help.version'),
-          userSettingsLoggedInAs: $t('navigation.userSettings.loggedInAs', { user }),
-          userSettingsProfile: $t('navigation.userSettings.profile'),
-          userSettingsChangePassword: $t('navigation.userSettings.changePassword'),
-          userSettingsLogout: $t('navigation.userSettings.logout'),
+          helpForum: $t('navigation:help.forum'),
+          helpDocumentation: $t('navigation:help.documentation'),
+          helpFeedback: $t('navigation:help.feedback'),
+          helpVersion: $t('navigation:help.version'),
+          userSettingsLoggedInAs: $t('navigation:userSettings.loggedInAs', { user }),
+          userSettingsProfile: $t('navigation:userSettings.profile'),
+          userSettingsChangePassword: $t('navigation:userSettings.changePassword'),
+          userSettingsLogout: $t('navigation:userSettings.logout'),
         }"
       >
         <template #title>
-          <portal-target name="topbar-title" />
+          <portal-target
+            name="topbar-title"
+          />
         </template>
 
         <template #tools>
-          <portal-target name="topbar-tools" />
+          <portal-target
+            name="topbar-tools"
+          />
         </template>
       </c-topbar>
     </header>
 
-    <aside
-      v-if="allowed"
-    >
+    <aside>
       <c-sidebar
         :expanded.sync="expanded"
         :pinned.sync="pinned"
         :icon="icon"
         :logo="logo"
+        :disabled-routes="['report.list', 'report.create', 'report.edit']"
         expand-on-hover
       >
         <template #header-expanded>
           <portal-target name="sidebar-header-expanded" />
         </template>
 
-        <!-- <template #body-expanded>
+        <template #body-expanded>
           <portal-target name="sidebar-body-expanded" />
-        </template> -->
+        </template>
 
         <template #footer-expanded>
           <portal-target name="sidebar-footer-expanded" />
         </template>
       </c-sidebar>
-
-      <portal to="sidebar-body-expanded">
-        <c-the-main-nav />
-      </portal>
     </aside>
 
-    <main
-      v-if="allowed"
-      class="d-inline-flex h-100 overflow-auto"
-    >
+    <main class="d-inline-flex h-100 overflow-auto">
       <!--
         Content spacer
         Large and xl screens should push in content when the nav is expanded
@@ -70,52 +64,44 @@
           }"
         />
       </template>
+
+      <div
+        class="d-flex flex-column w-100"
+      >
+        <router-view
+          class="flex-grow-1 overflow-auto"
+        />
+
+        <portal-target
+          name="report-toolbar"
+        />
+      </div>
     </main>
-    <c-prompts />
     <c-permissions-modal />
   </div>
 </template>
+
 <script>
-import CTheMainNav from '../components/CTheMainNav.vue'
-import { components, mixins } from '@cortezaproject/corteza-vue'
 import icon from '../themes/corteza-base/img/icon.png'
 import logo from '../themes/corteza-base/img/logo.png'
-import { mapGetters } from 'vuex'
-
-const { CPermissionsModal, CPrompts, CTopbar, CSidebar } = components
+import { components } from '@cortezaproject/corteza-vue'
+const { CPermissionsModal, CTopbar, CSidebar } = components
 
 export default {
-  i18nOptions: {
-    namespaces: 'discovery',
-  },
-
   components: {
     CPermissionsModal,
-    CPrompts,
     CTopbar,
     CSidebar,
-    CTheMainNav,
   },
-
-  mixins: [
-    mixins.corredor,
-  ],
 
   data () {
     return {
-      allowed: false,
-
-      error: null,
-      expanded: window.innerWidth > 576,
-      pinned: window.innerWidth > 576,
+      expanded: undefined,
+      pinned: undefined,
     }
   },
 
   computed: {
-    ...mapGetters({
-      can: 'rbac/can',
-    }),
-
     user () {
       const { user } = this.$auth
       return user.name || user.handle || user.email || ''
@@ -144,38 +130,6 @@ export default {
 
   created () {
     this.$root.$on('alert', this.displayToast)
-
-    const rulesToCheck = [
-      // Grant
-      { resource: 'system/', operation: 'grant' },
-      { resource: 'compose/', operation: 'grant' },
-      { resource: 'federation/', operation: 'grant' },
-      { resource: 'automation/', operation: 'grant' },
-      // Create
-      { resource: 'system/', operation: 'auth-client.create' },
-      { resource: 'system/', operation: 'role.create' },
-      { resource: 'system/', operation: 'user.create' },
-      { resource: 'system/', operation: 'application.create' },
-      { resource: 'system/', operation: 'template.create' },
-      { resource: 'system/', operation: 'report.create' },
-      { resource: 'system/', operation: 'queue.create' },
-      { resource: 'system/', operation: 'apigw-route.create' },
-      // Manage
-      { resource: 'system/', operation: 'settings.read' },
-      { resource: 'system/', operation: 'system.manage' },
-      { resource: 'system/', operation: 'action-log.read' },
-    ]
-
-    this.allowed = rulesToCheck.some(({ resource, operation }) => this.can(resource, operation))
-
-    // If not allowed to access, show error prompt and redirect after a delay
-    if (!this.allowed) {
-      this.toastDanger(this.$t('notification:notAllowed'))
-
-      setTimeout(() => {
-        window.location = '/..'
-      }, 5000)
-    }
   },
 
   methods: {
@@ -191,6 +145,7 @@ export default {
   },
 }
 </script>
+
 <style lang="scss" scoped>
 .spacer {
   min-width: 0;

@@ -1,21 +1,23 @@
-var webpack = require('webpack')
-var exec = require('child_process').execSync
-var path = require('path')
+const webpack = require('webpack')
+const exec = require('child_process').execSync
+const path = require('path')
 
-module.exports = ({ appFlavour, appName, appLabel, version, theme, packageAlias, root = path.resolve('.'), env = process.env.NODE_ENV }) => {
+module.exports = ({ appFlavour, appLabel, version = process.env.BUILD_VERSION, theme, packageAlias, root = path.resolve('.'), env = process.env.NODE_ENV }) => {
   const isDevelopment = (env === 'development')
-  // const isProduction = (env === 'production')
   const isTest = (env === 'test')
 
-  var Vue = require('vue')
-  if (isTest) {
-    Vue.config.devtools = false
-    Vue.config.productionTip = false
-  }
+  if (isTest || isDevelopment) {
+    const Vue = require('vue')
 
-  if (isDevelopment) {
-    Vue.config.devtools = true
-    Vue.config.performance = true
+    if (isTest) {
+      Vue.config.devtools = false
+      Vue.config.productionTip = false
+    }
+
+    if (isDevelopment) {
+      Vue.config.devtools = true
+      Vue.config.performance = true
+    }
   }
 
   const optimization = isTest ? {} : {
@@ -34,14 +36,21 @@ module.exports = ({ appFlavour, appName, appLabel, version, theme, packageAlias,
 
   return {
     publicPath: './',
-    lintOnSave: true,
+
+    // Vue ESLint does not understand that it should NOT dive into node_modules!
+    //
+    // This presents a problem because it loads @cortezaproject/corteza-*/.eslintrc.js files
+    // that contain @typescript-eslint plugins + the entire typescript toolset that we do not
+    // want or need here.
+    //
+    // Keep this value on false and run `yarn lint` to inspect and fix lint issues.
+    lintOnSave: false,
+
     runtimeCompiler: true,
 
     configureWebpack: {
       // other webpack options to merge in ...
 
-      // Make sure webpack is not too nosy
-      // and tries to tinker around linked packages
       resolve: { symlinks: false },
 
       plugins: [
@@ -84,7 +93,6 @@ module.exports = ({ appFlavour, appName, appLabel, version, theme, packageAlias,
       scssNormal.use('resolve-url-loader')
         .loader('resolve-url-loader').options({
           keepQuery: true,
-          removeCR: true,
           root: path.join(root, 'src/themes', theme),
         })
         .before('sass-loader')
@@ -94,6 +102,11 @@ module.exports = ({ appFlavour, appName, appLabel, version, theme, packageAlias,
       host: '127.0.0.1',
       hot: true,
       disableHostCheck: true,
+
+      overlay: {
+        warnings: true,
+        errors: true,
+      },
 
       watchOptions: {
         ignored: [

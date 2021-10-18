@@ -1,5 +1,5 @@
 // Corteza API location
-window.CortezaAPI = 'https://api.cortezaproject.your-domain.tld';
+window.CortezaAPI = 'http://localhost:5000/api';
 
 // CortezaAuth can be autoconfigured by replacing /api with /auth in CortezaAPI
 // or by appending /auth to the end of CortezaAPI string

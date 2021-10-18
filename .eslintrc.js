@@ -8,6 +8,7 @@ module.exports = {
     '@vue/standard',
   ],
   rules: {
+    'new-cap': 'off',
     'import/no-named-default': 'off',
     'vue/component-name-in-template-casing': ['error', 'kebab-case'],
     'vue/no-v-html': 'off',
