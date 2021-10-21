@@ -1,6 +1,6 @@
 // Corteza API location
-window.CortezaAPI = 'http://localhost:5000/api';
-
+window.CortezaAPI = 'http://localhost:5000/api'
+window.SearcherAPI = 'http://localhost:3101'
 // CortezaAuth can be autoconfigured by replacing /api with /auth in CortezaAPI
 // or by appending /auth to the end of CortezaAPI string
 // When this is not possible and your configuration is more exotic you can set it

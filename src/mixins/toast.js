@@ -29,7 +29,6 @@ export default {
     },
 
     toastErrorHandler (opt) {
-      console.log('toastErrorHandler')
       if (typeof opt === 'string') {
         opt = { prefix: opt }
       }

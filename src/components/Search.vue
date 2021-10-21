@@ -22,8 +22,11 @@
 </template>
 
 <script>
-import record from './Record'
+import record from '../components/Record'
 export default {
+  i18nOptions: {
+    namespaces: 'search',
+  },
   data () {
     return {
       searchText: null,
@@ -32,11 +35,19 @@ export default {
   },
   watch: {
     searchText: {
-      handler (text) {
-        console.log('text', text)
-        console.log('record', record)
-        this.results = record
+      handler: function (text) {
+        if (text.length > 0) this.getSearchData(text)
       },
+    },
+  },
+  methods: {
+    async getSearchData (text) {
+      try {
+        this.results = record
+        const searchData = await this.$SystemAPI.getSearchData(text)
+      } catch (error) {
+        this.toastErrorHandler(this.$t('notification.search-error'))(error)
+      }
     },
   },
 }

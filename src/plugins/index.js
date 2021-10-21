@@ -21,5 +21,4 @@ Vue.use(BootstrapVue, {
 Vue.use(BootstrapVueIcons)
 Vue.use(plugins.Auth(), { app: 'discovery' })
 Vue.use(plugins.CortezaAPI('system'))
-Vue.use(plugins.CortezaAPI('compose'))
 Vue.use(plugins.Settings, { api: Vue.prototype.$SystemAPI })
