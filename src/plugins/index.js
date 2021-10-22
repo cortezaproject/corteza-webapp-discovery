@@ -21,4 +21,5 @@ Vue.use(BootstrapVue, {
 Vue.use(BootstrapVueIcons)
 Vue.use(plugins.Auth(), { app: 'discovery' })
 Vue.use(plugins.CortezaAPI('system'))
+Vue.use(plugins.CortezaAPI('discovery', { baseURL: window.SearcherAPI }))
 Vue.use(plugins.Settings, { api: Vue.prototype.$SystemAPI })

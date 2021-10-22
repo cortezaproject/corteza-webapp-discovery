@@ -41,13 +41,12 @@ export default {
     },
   },
   methods: {
-    async getSearchData (text) {
-      try {
-        this.results = record
-        const searchData = await this.$SystemAPI.getSearchData(text)
-      } catch (error) {
-        this.toastErrorHandler(this.$t('notification.search-error'))(error)
-      }
+    getSearchData () {
+      this.$DiscoveryAPI.feedChanges()
+        .then((response) => {
+          this.results = record
+        })
+        .catch(this.toastErrorHandler(this.$t('notification.search-error')))
     },
   },
 }
