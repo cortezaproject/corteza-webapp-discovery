@@ -68,7 +68,7 @@
       <div
         class="d-flex flex-column w-100"
       >
-        <search class="flex-grow-1 overflow-auto" />
+        <search />
         <portal-target
           name="report-toolbar"
         />
