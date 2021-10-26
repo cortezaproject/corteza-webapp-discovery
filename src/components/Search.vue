@@ -31,7 +31,7 @@
           xl="4"
           class="mb-4"
         >
-          <result-card />
+          <result-card :hit="hit" />
         </b-col>
       </b-row>
     </div>
@@ -67,7 +67,7 @@ export default {
   },
   methods: {
     getSearchData (text) {
-      this.$DiscoveryAPI.getSearchData(text)
+      this.$DiscoverySearcherAPI.getSearchData(text)
         .then((response) => {
           this.results = response.data
         })

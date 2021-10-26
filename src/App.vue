@@ -28,9 +28,6 @@ export default {
         this.$i18n.i18next.changeLanguage(user.meta.preferredLanguage)
       }
 
-      // Load effective permissions
-      // this.$store.dispatch('rbac/load')
-
       this.$Settings.init({ api: this.$SystemAPI }).then(() => {
         this.loaded = true
       })

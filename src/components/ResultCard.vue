@@ -1,33 +1,41 @@
 <template>
   <div>
     <b-card
-      title="Card title"
-      sub-title="Card subtitle"
+      :title="hit.value.name"
+      class="shadow-sm"
     >
-      <b-card-text>
-        Some quick example text to build on the <em>card title</em> and make up the bulk of the card's
-        content.
+      <b-card-text class="mb-2">
+        <span class="text-info font-weight-bold mr-3">Account Name:</span>Accounts Germany
+      </b-card-text>
+      <b-card-text class="mb-2">
+        <span class="text-info font-weight-bold mr-3">Type:</span>{{ hit.type }}
+      </b-card-text>
+      <b-card-text class="mb-2">
+        <span class="text-info font-weight-bold mr-3">Industry:</span>Consulting
+      </b-card-text>
+      <b-card-text class="mb-2">
+        <span class="text-info font-weight-bold mr-3">Account Source:</span>Customer Referral
       </b-card-text>
 
-      <b-card-text>A second paragraph of text in the card.</b-card-text>
-
-      <a
+      <b-button
         href="#"
-        class="card-link"
-      >Card link</a>
-      <b-link
-        href="#"
-        class="card-link"
+        variant="info"
+        class="mt-2"
       >
-        Another link
-      </b-link>
+        Show more
+      </b-button>
     </b-card>
   </div>
 </template>
 
 <script>
 export default {
-
+  props: {
+    hit: {
+      type: Object,
+      default: null,
+    },
+  },
 }
 </script>
 

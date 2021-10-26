@@ -74,7 +74,6 @@
         />
       </div>
     </main>
-    <c-permissions-modal />
   </div>
 </template>
 
@@ -83,11 +82,10 @@ import icon from '../themes/corteza-base/img/icon.png'
 import logo from '../themes/corteza-base/img/logo.png'
 import Search from '../components/Search.vue'
 import { components } from '@cortezaproject/corteza-vue'
-const { CPermissionsModal, CTopbar, CSidebar } = components
+const { CTopbar, CSidebar } = components
 
 export default {
   components: {
-    CPermissionsModal,
     CTopbar,
     CSidebar,
     Search,
