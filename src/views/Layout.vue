@@ -13,19 +13,7 @@
           userSettingsChangePassword: $t('navigation:userSettings.changePassword'),
           userSettingsLogout: $t('navigation:userSettings.logout'),
         }"
-      >
-        <template #title>
-          <portal-target
-            name="topbar-title"
-          />
-        </template>
-
-        <template #tools>
-          <portal-target
-            name="topbar-tools"
-          />
-        </template>
-      </c-topbar>
+      />
     </header>
 
     <aside>
@@ -37,16 +25,8 @@
         :disabled-routes="['report.list', 'report.create', 'report.edit']"
         expand-on-hover
       >
-        <template #header-expanded>
-          <portal-target name="sidebar-header-expanded" />
-        </template>
-
         <template #body-expanded>
-          <portal-target name="sidebar-body-expanded" />
-        </template>
-
-        <template #footer-expanded>
-          <portal-target name="sidebar-footer-expanded" />
+          <filters @selectedTypes="selectedTypes" />
         </template>
       </c-sidebar>
     </aside>
@@ -65,14 +45,7 @@
         />
       </template>
 
-      <div
-        class="d-flex flex-column w-100"
-      >
-        <search />
-        <portal-target
-          name="report-toolbar"
-        />
-      </div>
+      <search :types="types" />
     </main>
   </div>
 </template>
@@ -81,6 +54,7 @@
 import icon from '../themes/corteza-base/img/icon.png'
 import logo from '../themes/corteza-base/img/logo.png'
 import Search from '../components/Search.vue'
+import Filters from '../components/Filters.vue'
 import { components } from '@cortezaproject/corteza-vue'
 const { CTopbar, CSidebar } = components
 
@@ -89,12 +63,14 @@ export default {
     CTopbar,
     CSidebar,
     Search,
+    Filters,
   },
 
   data () {
     return {
       expanded: undefined,
       pinned: undefined,
+      types: null,
     }
   },
 
@@ -138,6 +114,9 @@ export default {
         autoHideDelay: countdown,
         toaster: 'b-toaster-bottom-right',
       })
+    },
+    selectedTypes (types) {
+      this.types = types
     },
   },
 }

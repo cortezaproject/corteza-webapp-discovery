@@ -19,13 +19,13 @@
     >
       {{ `${numberOfResults} ${this.$t('search-results')}` }}
     </div>
-    <div v-if="results && results.hits">
+    <div v-if="filteredHits">
       <b-row
         align-h="start"
       >
         <b-col
-          v-for="hit in results.hits"
-          :key="hit.id"
+          v-for="(hit, i) in filteredHits"
+          :key="i"
           md="12"
           lg="6"
           xl="4"
@@ -47,15 +47,22 @@ export default {
   components: {
     ResultCard,
   },
+  props: {
+    types: {
+      type: Array,
+      default: null,
+    },
+  },
   data () {
     return {
       searchText: null,
-      results: null,
+      hits: null,
+      filteredHits: [],
     }
   },
   computed: {
     numberOfResults () {
-      return this.results?.total?.value ? this.results.total.value : 0
+      return this.filteredHits.length
     },
   },
   watch: {
@@ -64,19 +71,31 @@ export default {
         if (text.length > 0) this.getSearchData(text)
       },
     },
+    types: {
+      handler: function () {
+        this.getFilteredData()
+      },
+    },
   },
   methods: {
     getSearchData (text) {
       this.$DiscoverySearcherAPI.getSearchData(text)
         .then((response) => {
-          this.results = response.data
+          this.hits = response.data.hits
+          this.getFilteredData()
         })
         .catch(this.toastErrorHandler(this.$t('notification.search-error')))
+    },
+    getFilteredData () {
+      if (this.types?.length > 0 && this.hits) {
+        const results = this.hits.filter(hit => this.types.includes(hit.type))
+        this.filteredHits.splice(0, this.filteredHits.length, ...results)
+      } else if (this.hits) {
+        this.filteredHits.splice(0, this.filteredHits.length, ...this.hits)
+      } else {
+        this.filteredHits.splice(0, this.filteredHits.length)
+      }
     },
   },
 }
 </script>
-
-<style>
-
-</style>
