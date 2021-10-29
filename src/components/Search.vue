@@ -19,7 +19,16 @@
     >
       {{ `${numberOfResults} ${this.$t('search-results')}` }}
     </div>
-    <div v-if="filteredHits">
+    <div
+      v-if="spinner"
+      class="d-flex justify-content-center mt-5"
+    >
+      <b-spinner
+        label="Loading..."
+        variant="info"
+      />
+    </div>
+    <div v-if="filteredHits && !spinner">
       <b-row
         align-h="start"
       >
@@ -40,6 +49,7 @@
 
 <script>
 import ResultCard from '../components/ResultCard.vue'
+import { debounce } from 'lodash'
 export default {
   i18nOptions: {
     namespaces: 'search',
@@ -58,6 +68,7 @@ export default {
       searchText: null,
       hits: null,
       filteredHits: [],
+      spinner: false,
     }
   },
   computed: {
@@ -67,9 +78,9 @@ export default {
   },
   watch: {
     searchText: {
-      handler: function (text) {
-        if (text.length > 0) this.getSearchData(text)
-      },
+      handler: debounce(function (text) {
+        text.length > 0 ? this.getSearchData(text) : this.filteredHits.splice(0, this.filteredHits.length)
+      }, 700),
     },
     types: {
       handler: function () {
@@ -79,8 +90,10 @@ export default {
   },
   methods: {
     getSearchData (text) {
+      this.spinner = true
       this.$DiscoverySearcherAPI.getSearchData(text)
         .then((response) => {
+          this.spinner = false
           this.hits = response.data.hits
           this.getFilteredData()
         })
