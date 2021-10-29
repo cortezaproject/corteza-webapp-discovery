@@ -24,7 +24,6 @@
       class="d-flex justify-content-center mt-5"
     >
       <b-spinner
-        label="Loading..."
         variant="info"
       />
     </div>
