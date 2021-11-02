@@ -11,16 +11,28 @@
         <span class="text-info font-weight-bold mr-3">{{ this.$t('card.type') }}:</span>{{ typeName }}
       </b-card-text>
       <b-card-text
-        v-if="hit.type === 'compose:namespace' || 'compose:module'"
+        v-if="hit.type === 'system:user'"
+        class="mb-2"
+      >
+        <span class="text-info font-weight-bold mr-3">{{ this.$t('card.email') }}:</span>{{ hit.value.email }}
+      </b-card-text>
+      <b-card-text
+        v-if="hit.type !== 'compose:record'"
         class="mb-2"
       >
         <span class="text-info font-weight-bold mr-3">{{ this.$t('card.handle') }}:</span>{{ hit.value.handle }}
       </b-card-text>
       <b-card-text
-        v-if="hit.type === 'compose:module'"
+        v-if="hit.type === 'compose:module' || hit.type === 'compose:record'"
         class="mb-2"
       >
         <span class="text-info font-weight-bold mr-3">{{ this.$t('card.namespace') }}:</span>{{ hit.value.namespace.name }}
+      </b-card-text>
+      <b-card-text
+        v-if="hit.type === 'compose:record'"
+        class="mb-2"
+      >
+        <span class="text-info font-weight-bold mr-3">{{ this.$t('card.module') }}:</span>{{ hit.value.module.name }}
       </b-card-text>
       <div class="mt-auto">
         <b-button
@@ -48,6 +60,8 @@ export default {
   computed: {
     typeName () {
       if (this.hit.type === 'compose:namespace') return this.$t('card.namespace')
+      if (this.hit.type === 'system:user') return this.$t('card.user')
+      if (this.hit.type === 'compose:record') return this.$t('card.record')
       return this.$t('card.module')
     },
   },

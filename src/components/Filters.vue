@@ -32,6 +32,8 @@ export default {
       const options = [
         { text: this.$t('types.namespace'), value: 'compose:namespace' },
         { text: this.$t('types.module'), value: 'compose:module' },
+        { text: this.$t('types.record'), value: 'compose:record' },
+        { text: this.$t('types.user'), value: 'system:user' },
       ]
       return options
     },

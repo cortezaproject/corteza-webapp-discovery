@@ -78,7 +78,7 @@ export default {
   watch: {
     searchText: {
       handler: debounce(function (text) {
-        text.length > 0 ? this.getSearchData(text) : this.filteredHits.splice(0, this.filteredHits.length)
+        this.getSearchData(text)
       }, 700),
     },
     types: {
@@ -89,14 +89,18 @@ export default {
   },
   methods: {
     getSearchData (text) {
-      this.spinner = true
-      this.$DiscoverySearcherAPI.getSearchData(text)
-        .then((response) => {
-          this.spinner = false
-          this.hits = response.data.hits
-          this.getFilteredData()
-        })
-        .catch(this.toastErrorHandler(this.$t('notification.search-error')))
+      this.hits = null
+      this.filteredHits.splice(0, this.filteredHits.length)
+      if (text.length > 0) {
+        this.spinner = true
+        this.$DiscoverySearcherAPI.getSearchData(text)
+          .then((response) => {
+            this.spinner = false
+            this.hits = response.data.hits
+            if (this.hits) this.getFilteredData()
+          })
+          .catch(this.toastErrorHandler(this.$t('notification.search-error')))
+      }
     },
     getFilteredData () {
       if (this.types?.length > 0 && this.hits) {
@@ -104,8 +108,6 @@ export default {
         this.filteredHits.splice(0, this.filteredHits.length, ...results)
       } else if (this.hits) {
         this.filteredHits.splice(0, this.filteredHits.length, ...this.hits)
-      } else {
-        this.filteredHits.splice(0, this.filteredHits.length)
       }
     },
   },
