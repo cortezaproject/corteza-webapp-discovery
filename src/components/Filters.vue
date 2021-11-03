@@ -39,7 +39,7 @@ export default {
     },
   },
   updated () {
-    this.$store.state.types = this.types
+    this.$store.commit('updateTypes', this.types)
   },
 
 }

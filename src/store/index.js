@@ -8,6 +8,9 @@ export default new Vuex.Store({
     types: [],
   },
   mutations: {
+    updateTypes (state, types) {
+      state.types = types
+    },
   },
   actions: {
   },
