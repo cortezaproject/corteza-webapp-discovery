@@ -56,12 +56,6 @@ export default {
   components: {
     ResultCard,
   },
-  props: {
-    types: {
-      type: Array,
-      default: null,
-    },
-  },
   data () {
     return {
       searchText: null,
@@ -81,7 +75,7 @@ export default {
         this.getSearchData(text)
       }, 700),
     },
-    types: {
+    '$store.state.types': {
       handler: function () {
         this.getFilteredData()
       },
@@ -103,8 +97,8 @@ export default {
       }
     },
     getFilteredData () {
-      if (this.types?.length > 0 && this.hits) {
-        const results = this.hits.filter(hit => this.types.includes(hit.type))
+      if (this.$store.state.types.length > 0 && this.hits) {
+        const results = this.hits.filter(hit => this.$store.state.types.includes(hit.type))
         this.filteredHits.splice(0, this.filteredHits.length, ...results)
       } else if (this.hits) {
         this.filteredHits.splice(0, this.filteredHits.length, ...this.hits)

@@ -39,7 +39,7 @@ export default {
     },
   },
   updated () {
-    this.$emit('selectedTypes', this.types)
+    this.$store.state.types = this.types
   },
 
 }

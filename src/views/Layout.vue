@@ -26,7 +26,7 @@
         expand-on-hover
       >
         <template #body-expanded>
-          <filters @selectedTypes="selectedTypes" />
+          <filters />
         </template>
       </c-sidebar>
     </aside>
@@ -45,7 +45,7 @@
         />
       </template>
 
-      <search :types="types" />
+      <search />
     </main>
   </div>
 </template>
@@ -70,7 +70,6 @@ export default {
     return {
       expanded: undefined,
       pinned: undefined,
-      types: null,
     }
   },
 
@@ -114,9 +113,6 @@ export default {
         autoHideDelay: countdown,
         toaster: 'b-toaster-bottom-right',
       })
-    },
-    selectedTypes (types) {
-      this.types = types
     },
   },
 }
