@@ -59,7 +59,7 @@ export default {
   data () {
     return {
       searchText: null,
-      hits: null,
+      hits: [],
       filteredHits: [],
       spinner: false,
     }
@@ -80,18 +80,30 @@ export default {
         this.getFilteredData()
       },
     },
+    '$store.state.modules': {
+      handler: function (modules) {
+      },
+    },
+    '$store.state.namespaces': {
+      handler: function (namespaces) {
+      },
+    },
   },
   methods: {
     getSearchData (text) {
       this.hits = null
       this.filteredHits.splice(0, this.filteredHits.length)
+      this.$store.commit('updateAggregations', [])
       if (text.length > 0) {
         this.spinner = true
         this.$DiscoverySearcherAPI.getSearchData(text)
           .then((response) => {
-            this.spinner = false
-            this.hits = response.data.hits
-            if (this.hits) this.getFilteredData()
+            if (response?.data) {
+              this.spinner = false
+              this.hits = response.data.hits
+              if (response.data.hits?.length > 0) this.getFilteredData()
+              if (response.data.aggregations?.length > 0) this.$store.commit('updateAggregations', response.data.aggregations)
+            }
           })
           .catch(this.toastErrorHandler(this.$t('notification.search-error')))
       }
