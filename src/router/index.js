@@ -6,7 +6,7 @@ Vue.use(VueRouter)
 const routes = [
   {
     name: 'root',
-    path: '/discovery',
+    path: '/',
     component: () => import('../views/Layout'),
   },
   { path: '*', redirect: { name: 'root' } },
