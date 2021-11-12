@@ -49,6 +49,8 @@
 <script>
 import ResultCard from '../components/ResultCard.vue'
 import { debounce } from 'lodash'
+import { callDiscoveryAPI } from '../api/searcher'
+
 export default {
   i18nOptions: {
     namespaces: 'search',
@@ -96,17 +98,16 @@ export default {
       this.deleteStates()
       if (text.length > 0) {
         this.spinner = true
-        this.$DiscoverySearcherAPI.getSearchData(text)
-          .then((response) => {
-            if (response?.data) {
-              this.spinner = false
-              this.hits = response.data.hits
-              if (response.data.hits) {
-                this.getFilteredData()
-                this.$store.commit('updateAggregations', response.data.aggregations)
-              }
+        callDiscoveryAPI(text).then((response) => {
+          if (response) {
+            this.spinner = false
+            this.hits = response.hits
+            if (response.hits) {
+              this.getFilteredData()
+              this.$store.commit('updateAggregations', response.aggregations)
             }
-          })
+          }
+        })
           .catch(this.toastErrorHandler(this.$t('notification.search-error')))
       }
     },
