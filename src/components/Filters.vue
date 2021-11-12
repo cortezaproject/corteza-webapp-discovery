@@ -13,16 +13,15 @@
         class="ml-4 mt-1"
       />
     </div>
-    <div v-if="aggregations.length > 0">
+    <div v-if="this.$store.state.aggregations.length > 0">
       <div
-        v-for="(agg, index) in aggregations"
+        v-for="(agg, index) in this.$store.state.aggregations"
         :key="index"
         class="ml-4 mt-4"
       >
-        <span class="text-info font-weight-bold">{{ agg.name }} ({{ agg.hits }})</span>
+        <span class="text-info font-weight-bold">{{ selectName(agg.name) }} ({{ agg.hits }})</span>
         <b-form-checkbox-group
           v-model="groups[agg.name]"
-          :name="agg.name"
           stacked
           class="ml-4 mt-1"
         >
@@ -47,7 +46,6 @@ export default {
   data () {
     return {
       types: [],
-      aggregations: [],
       groups: {
         Module: [],
         Namespace: [],
@@ -66,17 +64,36 @@ export default {
     },
   },
   watch: {
-    '$store.state.aggregations': {
+    types: {
       handler: function () {
-        this.aggregations = this.$store.state.aggregations
+        this.$store.commit('updateTypes', this.types)
+      },
+    },
+    'groups.Module': {
+      handler: function () {
+        this.$store.commit('updateModule', this.groups.Module)
+      },
+    },
+    'groups.Namespace': {
+      handler: function () {
+        this.$store.commit('updateNamespace', this.groups.Namespace)
+      },
+    },
+    '$store.state.namespace': {
+      handler: function (namespace) {
+        this.groups.Namespace = namespace
+      },
+    },
+    '$store.state.module': {
+      handler: function (module) {
+        this.groups.Module = module
       },
     },
   },
-  updated () {
-    this.$store.commit('updateTypes', this.types)
-    this.$store.state.modules = this.groups.Module
-    this.$store.state.namespaces = this.groups.Namespace
+  methods: {
+    selectName (name) {
+      return name === 'Module' ? this.$t('aggregationGroups.modules') : this.$t('aggregationGroups.namespaces')
+    },
   },
-
 }
 </script>

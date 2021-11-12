@@ -7,8 +7,8 @@ export default new Vuex.Store({
   state: {
     types: [],
     aggregations: [],
-    modules: [],
-    namespaces: [],
+    module: [],
+    namespace: [],
   },
   mutations: {
     updateTypes (state, types) {
@@ -16,6 +16,12 @@ export default new Vuex.Store({
     },
     updateAggregations (state, aggs) {
       state.aggregations = aggs
+    },
+    updateModule (state, value) {
+      state.module = value
+    },
+    updateNamespace (state, value) {
+      state.namespace = value
     },
   },
   actions: {

@@ -80,20 +80,20 @@ export default {
         this.getFilteredData()
       },
     },
-    '$store.state.modules': {
-      handler: function (modules) {
-      },
+    '$store.state.module': {
+      handler: debounce(function () {
+        this.getAggregationData()
+      }, 1500),
     },
-    '$store.state.namespaces': {
-      handler: function (namespaces) {
-      },
+    '$store.state.namespace': {
+      handler: debounce(function () {
+        this.getAggregationData()
+      }, 1500),
     },
   },
   methods: {
     getSearchData (text) {
-      this.hits = null
-      this.filteredHits.splice(0, this.filteredHits.length)
-      this.$store.commit('updateAggregations', [])
+      this.deleteStates()
       if (text.length > 0) {
         this.spinner = true
         this.$DiscoverySearcherAPI.getSearchData(text)
@@ -101,8 +101,10 @@ export default {
             if (response?.data) {
               this.spinner = false
               this.hits = response.data.hits
-              if (response.data.hits?.length > 0) this.getFilteredData()
-              if (response.data.aggregations?.length > 0) this.$store.commit('updateAggregations', response.data.aggregations)
+              if (response.data.hits) {
+                this.getFilteredData()
+                this.$store.commit('updateAggregations', response.data.aggregations)
+              }
             }
           })
           .catch(this.toastErrorHandler(this.$t('notification.search-error')))
@@ -115,6 +117,15 @@ export default {
       } else if (this.hits) {
         this.filteredHits.splice(0, this.filteredHits.length, ...this.hits)
       }
+    },
+    getAggregationData () {
+    },
+    deleteStates () {
+      this.hits = null
+      this.filteredHits.splice(0, this.filteredHits.length)
+      this.$store.commit('updateAggregations', [])
+      this.$store.commit('updateModule', [])
+      this.$store.commit('updateNamespace', [])
     },
   },
 }
