@@ -3,36 +3,92 @@
     <h4 class="mt-3 ml-2">
       {{ this.$t('title') }}
     </h4>
-    <div class="ml-4 mt-4">
-      <span class="text-info font-weight-bold">{{ this.$t('types.title') }}</span>
-      <b-form-checkbox-group
-        v-model="types"
-        :options="options"
-        name="types"
-        stacked
-        class="ml-4 mt-1"
-      />
+    <div class="ml-2 mt-4">
+      <div
+        v-b-toggle.collapse-types
+        class="text-info d-flex justify-content-between"
+      >
+        <span class="font-weight-bold">
+          {{ this.$t('types.title') }}
+        </span>
+        <span>
+          <font-awesome-icon
+            v-if="typesVisible"
+            icon="chevron-up"
+          />
+          <font-awesome-icon
+            v-else
+            icon="chevron-down"
+          />
+        </span>
+      </div>
+
+      <b-collapse
+        id="collapse-types"
+        v-model="typesVisible"
+      >
+        <b-form-checkbox-group
+          v-model="types"
+          name="types"
+          stacked
+          class="ml-4 mt-1"
+        >
+          <b-form-checkbox
+            v-for="(option, i) in options"
+            :key="i"
+            :value="option.value"
+            class="mb-2"
+          >
+            {{ option.text }}
+          </b-form-checkbox>
+        </b-form-checkbox-group>
+      </b-collapse>
     </div>
     <div v-if="this.$store.state.aggregations.length > 0">
       <div
         v-for="(agg, index) in this.$store.state.aggregations"
         :key="index"
-        class="ml-4 mt-4"
+        class="ml-2 mt-4"
       >
-        <span class="text-info font-weight-bold">{{ selectName(agg.name) }} ({{ agg.hits }})</span>
-        <b-form-checkbox-group
-          v-model="groups[agg.name]"
-          stacked
-          class="ml-4 mt-1"
+        <div
+          v-b-toggle="'collapse-' + index"
+          class="text-info font-weight-bold d-flex justify-content-between"
         >
-          <b-form-checkbox
-            v-for="(resource, i) in agg.resource_name"
-            :key="i"
-            :value="resource.name"
+          <span>{{ selectName(agg.name) }} ({{ agg.hits }})</span>
+          <span>
+            <font-awesome-icon
+              v-if="visible[agg.name]"
+              icon="chevron-up"
+            />
+            <font-awesome-icon
+              v-else
+              icon="chevron-down"
+            />
+          </span>
+        </div>
+        <b-collapse
+          :id="'collapse-' + index"
+          v-model="visible[agg.name]"
+        >
+          <b-form-checkbox-group
+            v-model="groups[agg.name]"
+            stacked
+            class="ml-4 mt-1"
           >
-            {{ resource.name }} ({{ resource.hits }})
-          </b-form-checkbox>
-        </b-form-checkbox-group>
+            <div
+              v-for="(resource, i) in agg.resource_name"
+              :key="i"
+              class="d-flex justify-content-between mb-2"
+            >
+              <b-form-checkbox
+                :value="resource.name"
+              >
+                {{ resource.name }}
+              </b-form-checkbox>
+              <span>({{ resource.hits }})</span>
+            </div>
+          </b-form-checkbox-group>
+        </b-collapse>
       </div>
     </div>
   </div>
@@ -46,6 +102,11 @@ export default {
   data () {
     return {
       types: [],
+      typesVisible: false,
+      visible: {
+        Module: false,
+        Namespace: true,
+      },
       groups: {
         Module: [],
         Namespace: [],
@@ -71,22 +132,22 @@ export default {
     },
     'groups.Module': {
       handler: function () {
-        this.$store.commit('updateModule', this.groups.Module)
+        this.$store.commit('updateModules', this.groups.Module)
       },
     },
     'groups.Namespace': {
       handler: function () {
-        this.$store.commit('updateNamespace', this.groups.Namespace)
+        this.$store.commit('updateNamespaces', this.groups.Namespace)
       },
     },
-    '$store.state.namespace': {
-      handler: function (namespace) {
-        this.groups.Namespace = namespace
+    '$store.state.namespaces': {
+      handler: function (namespaces) {
+        this.groups.Namespace = namespaces
       },
     },
-    '$store.state.module': {
-      handler: function (module) {
-        this.groups.Module = module
+    '$store.state.modules': {
+      handler: function (modules) {
+        this.groups.Module = modules
       },
     },
   },

@@ -82,12 +82,12 @@ export default {
         this.getFilteredData()
       },
     },
-    '$store.state.module': {
+    '$store.state.modules': {
       handler: debounce(function () {
         this.getAggregationData()
       }, 1500),
     },
-    '$store.state.namespace': {
+    '$store.state.namespaces': {
       handler: debounce(function () {
         this.getAggregationData()
       }, 1500),
@@ -120,13 +120,28 @@ export default {
       }
     },
     getAggregationData () {
+      const modules = this.$store.state.modules
+      const namespaces = this.$store.state.namespaces
+      if (modules.length > 0 || namespaces.length > 0) {
+        this.spinner = true
+        callDiscoveryAPI('', modules, namespaces).then((response) => {
+          if (response) {
+            this.spinner = false
+            this.hits = response.hits
+            if (response.hits) {
+              this.getFilteredData()
+            }
+          }
+        })
+          .catch(this.toastErrorHandler(this.$t('notification.search-error')))
+      }
     },
     deleteStates () {
       this.hits = null
       this.filteredHits.splice(0, this.filteredHits.length)
-      this.$store.commit('updateAggregations', [])
-      this.$store.commit('updateModule', [])
-      this.$store.commit('updateNamespace', [])
+      if (this.$store.state.aggregations.length > 0) this.$store.commit('updateAggregations', [])
+      if (this.$store.state.modules.length > 0) this.$store.commit('updateModules', [])
+      if (this.$store.state.namespaces.length > 0) this.$store.commit('updateNamespaces', [])
     },
   },
 }
