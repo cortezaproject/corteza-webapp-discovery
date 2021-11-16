@@ -6,12 +6,12 @@
     <div class="ml-2 mt-4">
       <div
         v-b-toggle.collapse-types
-        class="text-info d-flex justify-content-between"
+        class="text-primary d-flex justify-content-between"
       >
         <span class="font-weight-bold">
           {{ this.$t('types.title') }}
         </span>
-        <span>
+        <span class="mr-2">
           <font-awesome-icon
             v-if="typesVisible"
             icon="chevron-up"
@@ -31,7 +31,7 @@
           v-model="types"
           name="types"
           stacked
-          class="ml-4 mt-1"
+          class="ml-2 mt-1"
         >
           <b-form-checkbox
             v-for="(option, i) in options"
@@ -52,10 +52,10 @@
       >
         <div
           v-b-toggle="'collapse-' + index"
-          class="text-info font-weight-bold d-flex justify-content-between"
+          class="text-primary font-weight-bold d-flex justify-content-between"
         >
           <span>{{ selectName(agg.name) }} ({{ agg.hits }})</span>
-          <span>
+          <span class="mr-2">
             <font-awesome-icon
               v-if="visible[agg.name]"
               icon="chevron-up"
@@ -73,7 +73,7 @@
           <b-form-checkbox-group
             v-model="groups[agg.name]"
             stacked
-            class="ml-4 mt-1"
+            class="ml-2 mt-1"
           >
             <div
               v-for="(resource, i) in agg.resource_name"
@@ -85,7 +85,7 @@
               >
                 {{ resource.name }}
               </b-form-checkbox>
-              <span>({{ resource.hits }})</span>
+              <span class="text-secondary mr-2">{{ resource.hits }}</span>
             </div>
           </b-form-checkbox-group>
         </b-collapse>

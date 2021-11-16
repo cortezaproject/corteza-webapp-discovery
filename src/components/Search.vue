@@ -1,6 +1,5 @@
 <template>
   <b-container fluid>
-    <h1>Corteza</h1>
     <b-row class="my-3">
       <b-col
         sm="12"
@@ -24,7 +23,7 @@
       class="d-flex justify-content-center mt-5"
     >
       <b-spinner
-        variant="info"
+        variant="primary"
       />
     </div>
     <div v-if="filteredHits && !spinner">
@@ -85,12 +84,12 @@ export default {
     '$store.state.modules': {
       handler: debounce(function () {
         this.getAggregationData()
-      }, 1500),
+      }, 1000),
     },
     '$store.state.namespaces': {
       handler: debounce(function () {
         this.getAggregationData()
-      }, 1500),
+      }, 1000),
     },
   },
   methods: {

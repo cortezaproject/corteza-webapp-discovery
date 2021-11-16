@@ -13,7 +13,11 @@
           userSettingsChangePassword: $t('navigation:userSettings.changePassword'),
           userSettingsLogout: $t('navigation:userSettings.logout'),
         }"
-      />
+      >
+        <template #title>
+          Corteza
+        </template>
+      </c-topbar>
     </header>
 
     <aside>

@@ -11,41 +11,41 @@
         v-if="hit.type !== 'compose:record'"
         class="mb-2"
       >
-        <span class="text-info font-weight-bold mr-3">{{ this.$t('card.type') }}:</span>{{ typeName }}
+        <span class="text-primary font-weight-bold mr-3">{{ this.$t('card.type') }}:</span>{{ typeName }}
       </b-card-text>
       <b-card-text
         v-if="hit.type === 'system:user'"
         class="mb-2"
       >
-        <span class="text-info font-weight-bold mr-3">{{ this.$t('card.email') }}:</span>{{ hit.value.email }}
+        <span class="text-primary font-weight-bold mr-3">{{ this.$t('card.email') }}:</span>{{ hit.value.email }}
       </b-card-text>
       <b-card-text
         v-if="hit.type !== 'compose:record'"
         class="mb-2"
       >
-        <span class="text-info font-weight-bold mr-3">{{ this.$t('card.handle') }}:</span>{{ hit.value.handle }}
+        <span class="text-primary font-weight-bold mr-3">{{ this.$t('card.handle') }}:</span>{{ hit.value.handle }}
       </b-card-text>
       <b-card-text
         v-if="hit.type === 'compose:module' || hit.type === 'compose:record'"
         class="mb-2"
       >
-        <span class="text-info font-weight-bold mr-3">{{ this.$t('card.namespace') }}:</span>{{ hit.value.namespace.name }}
+        <span class="text-primary font-weight-bold mr-3">{{ this.$t('card.namespace') }}:</span>{{ hit.value.namespace.name }}
       </b-card-text>
       <b-card-text
         v-if="hit.type === 'compose:record'"
         class="mb-2"
       >
-        <span class="text-info font-weight-bold mr-3">{{ this.$t('card.module') }}:</span>{{ hit.value.module.name }}
+        <span class="text-primary font-weight-bold mr-3">{{ this.$t('card.module') }}:</span>{{ hit.value.module.name }}
       </b-card-text><b-card-text
         v-if="hit.type === 'compose:record'"
         class="mb-2"
       >
-        <span class="text-info font-weight-bold mr-3">{{ this.$t('card.fields') }}:</span>{{ fields }}
+        <span class="text-primary font-weight-bold mr-3">{{ this.$t('card.fields') }}:</span>{{ fields }}
       </b-card-text>
       <div class="mt-auto">
         <b-button
           href="#"
-          variant="info"
+          variant="primary"
         >
           {{ this.$t('card.button-text') }}
         </b-button>
@@ -73,7 +73,7 @@ export default {
       return this.$t('card.module')
     },
     title () {
-      return this.hit.value.name ? this.hit.value.name : this.$t('card.record')
+      return this.hit.value.name ? this.hit.value.name : this.$t('card.record') + ' - ' + this.hit.value.recordID
     },
     fields () {
       let arr = []
