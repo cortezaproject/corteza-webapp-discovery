@@ -6,7 +6,7 @@
     <div class="ml-2 mt-4">
       <div
         v-b-toggle.collapse-types
-        class="text-primary d-flex justify-content-between"
+        class="pb-2 text-primary d-flex justify-content-between"
       >
         <span class="font-weight-bold">
           {{ this.$t('types.title') }}
@@ -44,17 +44,17 @@
         </b-form-checkbox-group>
       </b-collapse>
     </div>
-    <div v-if="this.$store.state.aggregations.length > 0">
+    <div v-if="aggregations">
       <div
         v-for="(agg, index) in this.$store.state.aggregations"
         :key="index"
-        class="ml-2 mt-4"
+        class="ml-2 pt-4"
       >
         <div
           v-b-toggle="'collapse-' + index"
           class="text-primary font-weight-bold d-flex justify-content-between"
         >
-          <span>{{ selectName(agg.name) }} ({{ agg.hits }})</span>
+          <span class="pb-2">{{ selectName(agg.name) }} ({{ agg.hits }})</span>
           <span class="mr-2">
             <font-awesome-icon
               v-if="visible[agg.name]"
@@ -83,7 +83,10 @@
               <b-form-checkbox
                 :value="resource.name"
               >
-                {{ resource.name }}
+                <span
+                  class="d-inline-block text-truncate"
+                  style="max-width: 200px;"
+                >{{ resource.name }}</span>
               </b-form-checkbox>
               <span class="text-secondary mr-2">{{ resource.hits }}</span>
             </div>
@@ -122,6 +125,10 @@ export default {
         { text: this.$t('types.user'), value: 'system:user' },
       ]
       return options
+    },
+    aggregations () {
+      const aggs = this.$store.state.aggregations
+      return aggs.length > 0 && (aggs[0].hits > 0 || aggs[1].hits > 0)
     },
   },
   watch: {

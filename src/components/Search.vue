@@ -7,10 +7,20 @@
         lg="5"
         xl="3"
       >
-        <b-form-input
-          v-model="searchText"
-          :placeholder="this.$t('input-placeholder')"
-        />
+        <b-input-group>
+          <b-form-input
+            v-model="searchText"
+            :placeholder="this.$t('input-placeholder')"
+            autocomplete="off"
+          />
+          <b-input-group-append>
+            <b-input-group-text class="text-primary bg-white">
+              <font-awesome-icon
+                :icon="['fas', 'search']"
+              />
+            </b-input-group-text>
+          </b-input-group-append>
+        </b-input-group>
       </b-col>
     </b-row>
     <div
@@ -83,12 +93,12 @@ export default {
     },
     '$store.state.modules': {
       handler: debounce(function (modules) {
-        modules.length > 0 ? this.getAggregationData() : this.getSearchData()
+        modules.length > 0 ? this.getAggregationData() : this.getSearchData(this.searchText)
       }, 1000),
     },
     '$store.state.namespaces': {
       handler: debounce(function (namespaces) {
-        namespaces.length > 0 ? this.getAggregationData() : this.getSearchData()
+        namespaces.length > 0 ? this.getAggregationData() : this.getSearchData(this.searchText)
       }, 1000),
     },
   },
@@ -97,6 +107,7 @@ export default {
   },
   methods: {
     getSearchData (text) {
+      console.log('getSearchData')
       this.deleteStates()
       this.spinner = true
       callDiscoveryAPI(text).then((response) => {
@@ -135,6 +146,9 @@ export default {
       }
     },
     deleteStates () {
+      console.log('aggregations', this.$store.state.aggregations)
+      console.log('modules', this.$store.state.modules)
+      console.log('namespaces', this.$store.state.namespaces)
       this.hits = null
       this.filteredHits.splice(0, this.filteredHits.length)
       if (this.$store.state.aggregations.length > 0) this.$store.commit('updateAggregations', [])
