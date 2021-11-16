@@ -82,33 +82,32 @@ export default {
       },
     },
     '$store.state.modules': {
-      handler: debounce(function () {
-        this.getAggregationData()
+      handler: debounce(function (modules) {
+        modules.length > 0 ? this.getAggregationData() : this.getSearchData()
       }, 1000),
     },
     '$store.state.namespaces': {
-      handler: debounce(function () {
-        this.getAggregationData()
+      handler: debounce(function (namespaces) {
+        namespaces.length > 0 ? this.getAggregationData() : this.getSearchData()
       }, 1000),
     },
+  },
+  created () {
+    this.getSearchData('')
   },
   methods: {
     getSearchData (text) {
       this.deleteStates()
-      if (text.length > 0) {
-        this.spinner = true
-        callDiscoveryAPI(text).then((response) => {
-          if (response) {
-            this.spinner = false
-            this.hits = response.hits
-            if (response.hits) {
-              this.getFilteredData()
-              this.$store.commit('updateAggregations', response.aggregations)
-            }
-          }
-        })
-          .catch(this.toastErrorHandler(this.$t('notification.search-error')))
-      }
+      this.spinner = true
+      callDiscoveryAPI(text).then((response) => {
+        if (response) {
+          this.spinner = false
+          this.hits = response.hits
+          if (response.hits) this.getFilteredData()
+          this.$store.commit('updateAggregations', response.aggregations)
+        }
+      })
+        .catch(this.toastErrorHandler(this.$t('notification.search-error')))
     },
     getFilteredData () {
       if (this.$store.state.types.length > 0 && this.hits) {
