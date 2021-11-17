@@ -108,7 +108,7 @@ export default {
       typesVisible: false,
       visible: {
         Module: false,
-        Namespace: true,
+        Namespace: false,
       },
       groups: {
         Module: [],

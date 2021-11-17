@@ -93,12 +93,16 @@ export default {
     },
     '$store.state.modules': {
       handler: debounce(function (modules) {
-        modules.length > 0 ? this.getAggregationData() : this.getSearchData(this.searchText)
+        modules.length > 0 || (modules.length === 0 && this.$store.state.namespaces.length > 0)
+          ? this.getAggregationData()
+          : this.getSearchData(this.searchText)
       }, 1000),
     },
     '$store.state.namespaces': {
       handler: debounce(function (namespaces) {
-        namespaces.length > 0 ? this.getAggregationData() : this.getSearchData(this.searchText)
+        namespaces.length > 0 || (namespaces.length === 0 && this.$store.state.modules.length > 0)
+          ? this.getAggregationData()
+          : this.getSearchData(this.searchText)
       }, 1000),
     },
   },
@@ -107,7 +111,6 @@ export default {
   },
   methods: {
     getSearchData (text) {
-      console.log('getSearchData', text)
       this.deleteStates()
       this.spinner = true
       callDiscoveryAPI(text).then((response) => {
@@ -148,7 +151,6 @@ export default {
     deleteStates () {
       this.hits = null
       this.filteredHits.splice(0, this.filteredHits.length)
-      if (this.$store.state.aggregations.length > 0) this.$store.commit('updateAggregations', [])
       if (this.$store.state.modules.length > 0) this.$store.commit('updateModules', [])
       if (this.$store.state.namespaces.length > 0) this.$store.commit('updateNamespaces', [])
     },
