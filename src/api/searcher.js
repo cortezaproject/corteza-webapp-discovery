@@ -4,7 +4,7 @@ import Vue from 'vue'
 export const callDiscoveryAPI = (query, modules, namespaces) => {
   const params = new URLSearchParams()
   if (modules?.length > 0) modules.forEach(m => params.append('moduleAggs', m))
-  if (namespaces?.length > 0) namespaces.forEach(n => params.append('namespceAggs', n))
+  if (namespaces?.length > 0) namespaces.forEach(n => params.append('namespaceAggs', n))
   const URL = `https://searcher.discovery.staging.cortezaproject.org/?q=${query}`
   return axios(URL, {
     method: 'GET',
