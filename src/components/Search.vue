@@ -69,7 +69,7 @@ export default {
   },
   data () {
     return {
-      searchText: null,
+      searchText: '',
       hits: [],
       filteredHits: [],
       spinner: false,
@@ -107,7 +107,7 @@ export default {
   },
   methods: {
     getSearchData (text) {
-      console.log('getSearchData')
+      console.log('getSearchData', text)
       this.deleteStates()
       this.spinner = true
       callDiscoveryAPI(text).then((response) => {
@@ -146,9 +146,6 @@ export default {
       }
     },
     deleteStates () {
-      console.log('aggregations', this.$store.state.aggregations)
-      console.log('modules', this.$store.state.modules)
-      console.log('namespaces', this.$store.state.namespaces)
       this.hits = null
       this.filteredHits.splice(0, this.filteredHits.length)
       if (this.$store.state.aggregations.length > 0) this.$store.commit('updateAggregations', [])
