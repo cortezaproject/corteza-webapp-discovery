@@ -4,64 +4,205 @@
     class="shadow-sm h-100"
   >
     <b-card-body class="d-flex flex-column">
-      <h4>
-        {{ title }}
-      </h4>
-      <b-card-text
-        v-if="hit.type !== 'compose:record'"
-        class="mb-2"
-      >
-        <div class="text-primary font-weight-bold mr-3">
-          {{ this.$t('card.type') }}:
-        </div>{{ typeName }}
-      </b-card-text>
-      <b-card-text
+      <!-- User -->
+      <b-overlay
         v-if="hit.type === 'system:user'"
-        class="mb-2"
       >
-        <div class="text-primary font-weight-bold mr-3">
-          {{ this.$t('card.email') }}:
-        </div>{{ hit.value.email }}
-      </b-card-text>
-      <b-card-text
-        v-if="hit.type !== 'compose:record'"
-        class="mb-2"
-      >
-        <div class="text-primary font-weight-bold mr-3">
-          {{ this.$t('card.handle') }}:
-        </div>{{ hit.value.handle }}
-      </b-card-text>
-      <b-card-text
-        v-if="hit.type === 'compose:module' || hit.type === 'compose:record'"
-        class="mb-2"
-      >
-        <div class="text-primary font-weight-bold mr-3">
-          {{ this.$t('card.namespace') }}:
-        </div>{{ hit.value.namespace.name }}
-      </b-card-text>
-      <b-card-text
-        v-if="hit.type === 'compose:record'"
-        class="mb-2"
-      >
-        <div class="text-primary font-weight-bold mr-3">
-          {{ this.$t('card.module') }}:
-        </div>{{ hit.value.module.name }}
-      </b-card-text><b-card-text
-        v-if="hit.type === 'compose:record'"
-        class="mb-2"
-      >
-        <div class="text-primary font-weight-bold mr-3">
-          {{ this.$t('card.fields') }}:
-        </div>{{ fields }}
-      </b-card-text>
-      <div class="mt-auto">
-        <b-button
-          href="#"
-          variant="primary"
+        <!-- User title -->
+        <b-card-text
+          class="mb-2"
         >
-          {{ this.$t('card.button-text') }}
-        </b-button>
-      </div>
+          <b-row>
+            <b-card-title
+              class="col-auto text-capitalize"
+              title="User"
+              title-tag="h5"
+            />
+          </b-row>
+        </b-card-text>
+
+        <!-- User fields -->
+        <b-card-text
+          v-for="(item, index) in limitData('system:user', hit.value)"
+          :key="index"
+          :data="item"
+          class="mb-2"
+        >
+          <b-row>
+            <b-col
+              class="text-info font-weight-bold text-capitalize"
+            >
+              {{ index }}:
+            </b-col>
+            <b-col>
+              {{ item }}
+            </b-col>
+          </b-row>
+        </b-card-text>
+      </b-overlay>
+
+      <!-- Namespace -->
+      <b-overlay
+        v-if="hit.type === 'compose:namespace'"
+      >
+        <!-- Namespace title -->
+        <b-card-text
+          class="mb-2"
+        >
+          <b-row>
+            <b-card-title
+              v-if="hit.value.name"
+              class="col-auto text-capitalize"
+              :title="hit.value.name"
+              title-tag="h5"
+            />
+          </b-row>
+        </b-card-text>
+
+        <!-- Namespace fields -->
+        <b-card-text
+          v-for="(item, index) in limitData('compose:namespace', hit.value)"
+          :key="index"
+          :data="item"
+          class="mb-2"
+        >
+          <b-row>
+            <b-col
+              class="text-info font-weight-bold text-capitalize"
+            >
+              {{ index }}:
+            </b-col>
+            <b-col>
+              {{ item }}
+            </b-col>
+          </b-row>
+        </b-card-text>
+      </b-overlay>
+
+      <!-- Module -->
+      <b-overlay
+        v-if="hit.type === 'compose:module'"
+      >
+        <!-- Module title -->
+        <b-card-text
+          class="mb-2"
+        >
+          <b-row>
+            <b-card-title
+              v-if="hit.value.namespace.name"
+              class="col-auto text-capitalize"
+              :title="hit.value.namespace.name"
+              title-tag="h5"
+            />
+            <b-card-title
+              v-if="hit.value.namespace.name"
+              class="col-0"
+              title-tag="h5"
+            >
+              <b-icon
+                icon="arrow-right"
+                font-scale="1"
+              />
+            </b-card-title>
+            <b-card-title
+              class="col-auto text-capitalize"
+              :title="hit.value.name"
+              title-tag="h5"
+            />
+          </b-row>
+        </b-card-text>
+
+        <!-- Module fields -->
+        <b-card-text
+          v-for="(item, index) in limitData('compose:module', hit.value)"
+          :key="index"
+          :data="item"
+          class="mb-2"
+        >
+          <b-row>
+            <b-col
+              class="text-info font-weight-bold text-capitalize"
+            >
+              {{ index }}:
+            </b-col>
+            <b-col>
+              {{ item }}
+            </b-col>
+          </b-row>
+        </b-card-text>
+      </b-overlay>
+
+      <!-- Record -->
+      <b-overlay
+        v-if="hit.type === 'compose:record'"
+      >
+        <!-- Record title -->
+        <b-card-text
+          class="mb-2"
+        >
+          <b-row>
+            <b-card-title
+              v-if="hit.value.namespace.name"
+              class="col-auto text-capitalize"
+              :title="hit.value.namespace.name"
+              title-tag="h5"
+            />
+            <b-card-title
+              v-if="hit.value.namespace.name"
+              class="col-0"
+              title-tag="h5"
+            >
+              <b-icon
+                icon="arrow-right"
+                font-scale="1"
+              />
+            </b-card-title>
+            <b-card-title
+              class="col-auto text-capitalize"
+              :title="hit.value.module.name"
+              title-tag="h5"
+            />
+          </b-row>
+        </b-card-text>
+
+        <!-- Record fields -->
+        <b-card-text
+          v-for="(item, index) in limitData('compose:record', hit.value.values)"
+          :key="index"
+          :data="item"
+          class="mb-2"
+        >
+          <b-row>
+            <b-col
+              class="text-info font-weight-bold text-capitalize"
+            >
+              {{ index }}:
+            </b-col>
+            <b-col>
+              {{ item }}
+            </b-col>
+          </b-row>
+        </b-card-text>
+      </b-overlay>
+
+      <!-- Url to resource -->
+      <b-row
+        v-if="hit.value.url"
+      >
+        <b-col
+          md="4"
+          sm="5"
+        >
+          <b-button
+            size="sm"
+            variant="info"
+            :href="hit.value.url"
+            target="_blank"
+          >
+            {{ this.$t('card.button-text') }}
+          </b-button>
+        </b-col>
+      </b-row>
     </b-card-body>
   </b-card>
 </template>
@@ -85,7 +226,7 @@ export default {
       return this.$t('card.module')
     },
     title () {
-      return this.hit.value.name ? this.hit.value.name : this.$t('card.record') + ' - ' + this.hit.value.recordID
+      return this.hit.value.name ? this.hit.value.name : this.$t('card.record')
     },
     fields () {
       let arr = []
@@ -96,6 +237,71 @@ export default {
         arr = arr.join(', ')
       }
       return arr
+    },
+    data () {
+      return {
+        LimitationList: 5,
+        showLess: false,
+      }
+    },
+  },
+  methods: {
+    limitData (resourceType, list, limit = 5) {
+      if (limit < 1) {
+        return
+      }
+      const out = {}
+      let counter = 0
+      for (const key in list) {
+        const value = list[key]
+
+        // @todo fix all field mapping and send limited things on FE
+        switch (resourceType) {
+          case 'compose:namespace':
+            if (
+              counter < limit &&
+              !!value &&
+              ['created', 'updated', 'meta', 'security', 'url'].indexOf(key) < 0
+            ) {
+              out[key] = value
+              counter++
+            }
+            break
+          case 'compose:module':
+            if (
+              counter < limit &&
+              !!value &&
+              ['created', 'updated', 'meta', 'security', 'fields', 'url', 'namespace'].indexOf(key) < 0
+            ) {
+              out[key] = value
+              counter++
+            }
+            break
+          case 'compose:record':
+            if (
+              Array.isArray(value) &&
+              value.length > 0 &&
+              counter < limit &&
+              !!value[0]
+            ) {
+              // @todo for multiple value, will be fixed with dynamic field from response
+              out[key] = value[0]
+              counter++
+            }
+            break
+          case 'system:user':
+            if (
+              counter < limit &&
+              !!value &&
+              ['created', 'updated', 'security'].indexOf(key) < 0
+            ) {
+              out[key] = value
+              counter++
+            }
+            break
+        }
+      }
+      return out
     },
   },
 }
