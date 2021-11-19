@@ -118,7 +118,8 @@ export default {
   },
   methods: {
     selectName (name) {
-      return name === 'Module' ? this.$t('aggregation-groups.modules') : this.$t('aggregation-groups.namespaces')
+      // return name === 'Module' ? this.$t('aggregation-groups.modules') : this.$t('aggregation-groups.namespaces')
+      return name
     },
   },
 }
