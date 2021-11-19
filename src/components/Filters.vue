@@ -4,7 +4,7 @@
       {{ this.$t('title') }}
     </h4>
     <div class="ml-2 mt-4">
-      <span class="text-info font-weight-bold">{{ this.$t('types.title') }}</span>
+      <span class="text-primary font-weight-bold">{{ this.$t('types.title') }}</span>
       <b-form-checkbox-group
         v-model="types"
         :options="options"
@@ -21,7 +21,7 @@
       >
         <!--        <span class="">{{ selectName(agg.name) }} ({{ agg.hits }})</span>-->
         <b-row class="w-100">
-          <b-col cols="auto text-info font-weight-bold">
+          <b-col cols="auto text-primary font-weight-bold">
             {{ selectName(agg.name) }}
           </b-col>
           <b-col cols="0">
@@ -132,13 +132,14 @@ export default {
 }
 
 .badge {
-  width: 18px;
-  height: 18px;
-  line-height: 12px;
+  width: 22px;
+  height: 22px;
+  line-height: 13px;
   font-weight: 900;
   border-radius: 50%;
   font-size: 12px;
   vertical-align: middle;
+  text-align: center;
 
   /* todo maybe from global styling */
   color: white;

@@ -30,7 +30,7 @@
         >
           <b-row>
             <b-col
-              class="text-info font-weight-bold text-capitalize"
+              class="text-primary font-weight-bold text-capitalize"
             >
               {{ index }}:
             </b-col>
@@ -68,7 +68,7 @@
         >
           <b-row>
             <b-col
-              class="text-info font-weight-bold text-capitalize"
+              class="text-primary font-weight-bold text-capitalize"
             >
               {{ index }}:
             </b-col>
@@ -121,7 +121,7 @@
         >
           <b-row>
             <b-col
-              class="text-info font-weight-bold text-capitalize"
+              class="text-primary font-weight-bold text-capitalize"
             >
               {{ index }}:
             </b-col>
@@ -174,7 +174,7 @@
         >
           <b-row>
             <b-col
-              class="text-info font-weight-bold text-capitalize"
+              class="text-primary font-weight-bold text-capitalize"
             >
               {{ index }}:
             </b-col>
@@ -195,7 +195,7 @@
         >
           <b-button
             size="sm"
-            variant="info"
+            variant="primary"
             :href="hit.value.url"
             target="_blank"
           >
