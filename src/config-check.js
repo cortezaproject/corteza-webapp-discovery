@@ -1,5 +1,6 @@
 [
   'CortezaAPI',
+  'SearcherAPI',
 ].forEach((cfg) => {
   if (window[cfg] === undefined) {
     throw new Error(`Missing or invalid configuration. 

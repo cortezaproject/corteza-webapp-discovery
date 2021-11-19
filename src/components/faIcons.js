@@ -1,5 +1,5 @@
 import { library } from '@fortawesome/fontawesome-svg-core'
-import { faGripHorizontal, faThumbtack, faBars, faChevronUp, faChevronDown, faSearch } from '@fortawesome/free-solid-svg-icons'
+import { faGripHorizontal, faThumbtack, faBars, faChevronUp, faChevronDown, faSearch, faMapMarkedAlt } from '@fortawesome/free-solid-svg-icons'
 import { faQuestionCircle, faUser } from '@fortawesome/free-regular-svg-icons'
 
 library.add(
@@ -11,4 +11,5 @@ library.add(
   faChevronDown,
   faChevronUp,
   faSearch,
+  faMapMarkedAlt,
 )

@@ -1,15 +1,14 @@
 <template>
   <b-container fluid>
-    <b-row class="my-3">
+    <b-row>
       <b-col
-        sm="12"
-        md="9"
-        lg="5"
-        xl="3"
+        :cols="map.show ? '5' : '12'"
       >
-        <b-input-group>
+        <b-input-group
+          :class="map.show ? '' : 'w-25'"
+        >
           <b-form-input
-            v-model="searchText"
+            v-model="query"
             :placeholder="this.$t('input-placeholder')"
             autocomplete="off"
           />
@@ -19,39 +18,57 @@
                 :icon="['fas', 'search']"
               />
             </b-input-group-text>
+            <b-button
+              variant="light"
+              rounded
+              style="z-index: 100;"
+              @click="toggleMap"
+            >
+              <font-awesome-icon
+                :icon="['fas', 'map-marked-alt']"
+              />
+            </b-button>
           </b-input-group-append>
         </b-input-group>
+
+        <div
+          class="mb-3 text-muted"
+        >
+          {{ `${numberOfResults} ${this.$t('search-results')}` }}
+        </div>
+        <div
+          v-if="spinner"
+          class="d-flex justify-content-center mt-5"
+        >
+          <b-spinner
+            variant="primary"
+          />
+        </div>
+        <div v-if="filteredHits && !spinner">
+          <b-row
+            align-h="start"
+          >
+            <b-col
+              v-for="(hit, i) in filteredHits"
+              :key="i"
+              md="12"
+              lg="6"
+              xl="4"
+              class="mb-4"
+            >
+              <result-card :hit="hit" />
+            </b-col>
+          </b-row>
+        </div>
+      </b-col>
+      <b-col
+        v-if="map.show"
+      >
+        <discovery-map
+          class="sticky-top"
+        />
       </b-col>
     </b-row>
-    <div
-      class="mb-3 text-muted"
-    >
-      {{ `${numberOfResults} ${this.$t('search-results')}` }}
-    </div>
-    <div
-      v-if="spinner"
-      class="d-flex justify-content-center mt-5"
-    >
-      <b-spinner
-        variant="primary"
-      />
-    </div>
-    <div v-if="filteredHits && !spinner">
-      <b-row
-        align-h="start"
-      >
-        <b-col
-          v-for="(hit, i) in filteredHits"
-          :key="i"
-          md="12"
-          lg="6"
-          xl="4"
-          class="mb-4"
-        >
-          <result-card :hit="hit" />
-        </b-col>
-      </b-row>
-    </div>
   </b-container>
 </template>
 
@@ -59,56 +76,73 @@
 import ResultCard from '../components/ResultCard.vue'
 import { debounce } from 'lodash'
 import { callDiscoveryAPI } from '../api/searcher'
+import DiscoveryMap from './DiscoveryMap.vue'
 
 export default {
   i18nOptions: {
     namespaces: 'search',
   },
+
   components: {
     ResultCard,
+    DiscoveryMap,
   },
+
   data () {
     return {
-      searchText: '',
+      query: '',
+
       hits: [],
       filteredHits: [],
+
       spinner: false,
+
+      map: {
+        show: false,
+      },
     }
   },
+
   computed: {
     numberOfResults () {
       return this.filteredHits.length
     },
   },
+
   watch: {
-    searchText: {
+    query: {
       handler: debounce(function (text) {
         this.getSearchData(text)
       }, 700),
     },
+
     '$store.state.types': {
       handler: function () {
         this.getFilteredData()
       },
     },
+
     '$store.state.modules': {
       handler: debounce(function (modules) {
         modules.length > 0 || (modules.length === 0 && this.$store.state.namespaces.length > 0)
           ? this.getAggregationData()
-          : this.getSearchData(this.searchText)
+          : this.getSearchData(this.query)
       }, 1000),
     },
+
     '$store.state.namespaces': {
       handler: debounce(function (namespaces) {
         namespaces.length > 0 || (namespaces.length === 0 && this.$store.state.modules.length > 0)
           ? this.getAggregationData()
-          : this.getSearchData(this.searchText)
+          : this.getSearchData(this.query)
       }, 1000),
     },
   },
+
   created () {
     this.getSearchData('')
   },
+
   methods: {
     getSearchData (text) {
       this.deleteStates()
@@ -123,6 +157,7 @@ export default {
       })
         .catch(this.toastErrorHandler(this.$t('notification.search-error')))
     },
+
     getFilteredData () {
       if (this.$store.state.types.length > 0 && this.hits) {
         const results = this.hits.filter(hit => this.$store.state.types.includes(hit.type))
@@ -131,6 +166,7 @@ export default {
         this.filteredHits.splice(0, this.filteredHits.length, ...this.hits)
       }
     },
+
     getAggregationData () {
       const modules = this.$store.state.modules
       const namespaces = this.$store.state.namespaces
@@ -148,12 +184,24 @@ export default {
           .catch(this.toastErrorHandler(this.$t('notification.search-error')))
       }
     },
+
     deleteStates () {
       this.hits = null
       this.filteredHits.splice(0, this.filteredHits.length)
       if (this.$store.state.modules.length > 0) this.$store.commit('updateModules', [])
       if (this.$store.state.namespaces.length > 0) this.$store.commit('updateNamespaces', [])
     },
+
+    toggleMap () {
+      this.map.show = !this.map.show
+    },
   },
 }
 </script>
+
+<style lang="scss" scoped>
+.toolbar {
+  bottom: 0;
+  right: 0;
+}
+</style>

@@ -9,6 +9,7 @@ import './config-check'
 import './console-splash'
 import './plugins'
 import './mixins'
+import './components'
 
 new Vue({
   router,
