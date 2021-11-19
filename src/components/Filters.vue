@@ -97,20 +97,20 @@ export default {
     },
     'groups.Module': {
       handler: function () {
-        this.$store.commit('updateModule', this.groups.Module)
+        this.$store.commit('updateModules', this.groups.Module)
       },
     },
     'groups.Namespace': {
       handler: function () {
-        this.$store.commit('updateNamespace', this.groups.Namespace)
+        this.$store.commit('updateNamespaces', this.groups.Namespace)
       },
     },
-    '$store.state.namespace': {
+    '$store.state.namespaces': {
       handler: function (namespace) {
         this.groups.Namespace = namespace
       },
     },
-    '$store.state.module': {
+    '$store.state.modules': {
       handler: function (module) {
         this.groups.Module = module
       },
