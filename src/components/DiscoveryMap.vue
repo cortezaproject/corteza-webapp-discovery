@@ -13,15 +13,31 @@
     <vl-layer-tile id="osm">
       <vl-source-osm />
     </vl-layer-tile>
+
+    <vl-feature
+      v-for="marker in markers"
+      :key="marker.id"
+    >
+      <vl-geom-point
+        :coordinates="marker.coordinates"
+      />
+    </vl-feature>
   </vl-map>
 </template>
 
 <script>
 export default {
+  props: {
+    markers: {
+      type: Array,
+      required: true,
+    },
+  },
+
   data () {
     return {
       zoom: 2,
-      center: [0, 0],
+      center: [30, 30],
       rotation: 0,
     }
   },

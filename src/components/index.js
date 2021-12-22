@@ -8,7 +8,10 @@ import './faIcons'
 import { components } from '@cortezaproject/corteza-vue'
 
 Vue.use(PortalVue)
-Vue.use(VueLayers)
+
+Vue.use(VueLayers, {
+  dataProjection: 'EPSG:4326',
+})
 
 Vue.use(BootstrapVue, {
   BToast: {

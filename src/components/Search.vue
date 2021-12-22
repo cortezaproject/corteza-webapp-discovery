@@ -66,6 +66,7 @@
       >
         <discovery-map
           class="sticky-top"
+          :markers="map.markers"
         />
       </b-col>
     </b-row>
@@ -99,6 +100,7 @@ export default {
 
       map: {
         show: false,
+        markers: [],
       },
     }
   },
@@ -153,6 +155,8 @@ export default {
           this.hits = response.hits
           if (response.hits) this.getFilteredData()
           this.$store.commit('updateAggregations', response.aggregations)
+
+          this.getMarkers()
         }
       })
         .catch(this.toastErrorHandler(this.$t('notification.search-error')))
@@ -185,8 +189,23 @@ export default {
       }
     },
 
+    getMarkers () {
+      const markers = []
+
+      this.filteredHits.forEach(({ type, value }) => {
+        if (type === 'compose:record') {
+          let coordinates = (JSON.parse((value.values.find(({ name }) => name === 'Geo') || {}).value || '{}') || {}).coordinates || []
+          coordinates = coordinates.map(parseFloat)
+          markers.push({ id: value.recordID, coordinates })
+        }
+      }, [])
+
+      this.map.markers = markers
+    },
+
     deleteStates () {
       this.hits = null
+      this.map.markers = []
       this.filteredHits.splice(0, this.filteredHits.length)
       if (this.$store.state.modules.length > 0) this.$store.commit('updateModules', [])
       if (this.$store.state.namespaces.length > 0) this.$store.commit('updateNamespaces', [])

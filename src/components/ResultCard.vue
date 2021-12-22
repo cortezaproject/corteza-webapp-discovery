@@ -176,10 +176,10 @@
             <b-col
               class="text-primary font-weight-bold text-capitalize"
             >
-              {{ index }}:
+              {{ item.name }}:
             </b-col>
             <b-col>
-              {{ item }}
+              {{ item.value }}
             </b-col>
           </b-row>
         </b-card-text>
@@ -247,61 +247,68 @@ export default {
   },
   methods: {
     limitData (resourceType, list, limit = 5) {
-      if (limit < 1) {
-        return
-      }
-      const out = {}
-      let counter = 0
-      for (const key in list) {
-        const value = list[key]
-
-        // @todo fix all field mapping and send limited things on FE
-        switch (resourceType) {
-          case 'compose:namespace':
-            if (
-              counter < limit &&
-              !!value &&
-              ['created', 'updated', 'meta', 'security', 'url'].indexOf(key) < 0
-            ) {
-              out[key] = value
-              counter++
-            }
-            break
-          case 'compose:module':
-            if (
-              counter < limit &&
-              !!value &&
-              ['created', 'updated', 'meta', 'security', 'fields', 'url', 'namespace'].indexOf(key) < 0
-            ) {
-              out[key] = value
-              counter++
-            }
-            break
-          case 'compose:record':
-            if (
-              Array.isArray(value) &&
-              value.length > 0 &&
-              counter < limit &&
-              !!value[0]
-            ) {
-              // @todo for multiple value, will be fixed with dynamic field from response
-              out[key] = value[0]
-              counter++
-            }
-            break
-          case 'system:user':
-            if (
-              counter < limit &&
-              !!value &&
-              ['created', 'updated', 'security'].indexOf(key) < 0
-            ) {
-              out[key] = value
-              counter++
-            }
-            break
+      if (resourceType === 'compose:record') {
+        return list
+      } else {
+        if (limit < 1) {
+          return
         }
+        const out = {}
+        let counter = 0
+        for (const key in list) {
+          const value = list[key]
+
+          // @todo fix all field mapping and send limited things on FE
+          switch (resourceType) {
+            case 'compose:namespace':
+              if (
+                counter < limit &&
+                !!value &&
+                ['created', 'updated', 'meta', 'security', 'url'].indexOf(key) < 0
+              ) {
+                out[key] = value
+                counter++
+              }
+              break
+            case 'compose:module':
+              console.log(list)
+
+              if (
+                counter < limit &&
+                !!value &&
+                ['created', 'updated', 'meta', 'security', 'fields', 'url', 'namespace'].indexOf(key) < 0
+              ) {
+                out[key] = value
+                counter++
+              }
+              break
+            case 'compose:record':
+              if (
+                Array.isArray(value) &&
+                value.length > 0 &&
+                counter < limit &&
+                !!value[0]
+              ) {
+                // @todo for multiple value, will be fixed with dynamic field from response
+                out[key] = value[0]
+                counter++
+              }
+              break
+            case 'system:user':
+              if (
+                counter < limit &&
+                !!value &&
+                ['created', 'updated', 'security'].indexOf(key) < 0
+              ) {
+                out[key] = value
+                counter++
+              }
+              break
+          }
+        }
+
+        return out
       }
-      return out
     },
   },
 }
