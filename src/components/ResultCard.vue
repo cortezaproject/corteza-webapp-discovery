@@ -271,8 +271,6 @@ export default {
               }
               break
             case 'compose:module':
-              console.log(list)
-
               if (
                 counter < limit &&
                 !!value &&

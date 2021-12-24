@@ -76,7 +76,6 @@
 <script>
 import ResultCard from '../components/ResultCard.vue'
 import { debounce } from 'lodash'
-import { callDiscoveryAPI } from '../api/searcher'
 import DiscoveryMap from './DiscoveryMap.vue'
 
 export default {
@@ -146,17 +145,17 @@ export default {
   },
 
   methods: {
-    getSearchData (text) {
+    getSearchData (query) {
       this.deleteStates()
       this.spinner = true
-      callDiscoveryAPI(text).then((response) => {
+      this.$SearcherAPI.query({ query }).then((response) => {
         if (response) {
-          this.spinner = false
           this.hits = response.hits
           if (response.hits) this.getFilteredData()
           this.$store.commit('updateAggregations', response.aggregations)
 
           this.getMarkers()
+          this.spinner = false
         }
       })
         .catch(this.toastErrorHandler(this.$t('notification.search-error')))
@@ -176,13 +175,13 @@ export default {
       const namespaces = this.$store.state.namespaces
       if (modules.length > 0 || namespaces.length > 0) {
         this.spinner = true
-        callDiscoveryAPI('', modules, namespaces).then((response) => {
+        this.$SearcherAPI.query({ query: '', modules, namespaces }).then(response => {
           if (response) {
-            this.spinner = false
             this.hits = response.hits
             if (response.hits) {
               this.getFilteredData()
             }
+            this.spinner = false
           }
         })
           .catch(this.toastErrorHandler(this.$t('notification.search-error')))
@@ -198,7 +197,7 @@ export default {
           coordinates = coordinates.map(parseFloat)
           markers.push({ id: value.recordID, coordinates })
         }
-      }, [])
+      })
 
       this.map.markers = markers
     },
