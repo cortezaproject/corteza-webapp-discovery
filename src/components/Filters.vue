@@ -11,6 +11,7 @@
         name="types"
         stacked
         class="ml-3 mt-1"
+        @change="updateTypes()"
       />
     </div>
     <div v-if="this.$store.state.aggregations.length">
@@ -43,6 +44,7 @@
           v-model="groups[agg.name]"
           stacked
           class="ml-3 mt-1"
+          @change="updateGroup(agg.name)"
         >
           <b-form-checkbox
             v-for="(resource, i) in agg.resource_name"
@@ -90,21 +92,6 @@ export default {
     },
   },
   watch: {
-    types: {
-      handler: function () {
-        this.$store.commit('updateTypes', this.types)
-      },
-    },
-    'groups.Module': {
-      handler: function () {
-        this.$store.commit('updateModules', this.groups.Module)
-      },
-    },
-    'groups.Namespace': {
-      handler: function () {
-        this.$store.commit('updateNamespaces', this.groups.Namespace)
-      },
-    },
     '$store.state.namespaces': {
       handler: function (namespace) {
         this.groups.Namespace = namespace
@@ -120,6 +107,14 @@ export default {
     selectName (name) {
       // return name === 'Module' ? this.$t('aggregation-groups.modules') : this.$t('aggregation-groups.namespaces')
       return name
+    },
+
+    updateTypes () {
+      this.$store.commit('updateTypes', this.types)
+    },
+
+    updateGroup (group) {
+      this.$store.commit(`update${group}s`, this.groups[group])
     },
   },
 }

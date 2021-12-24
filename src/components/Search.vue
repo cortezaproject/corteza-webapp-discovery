@@ -128,7 +128,7 @@ export default {
         modules.length > 0 || (modules.length === 0 && this.$store.state.namespaces.length > 0)
           ? this.getAggregationData()
           : this.getSearchData(this.query)
-      }, 1000),
+      }, 200),
     },
 
     '$store.state.namespaces': {
@@ -136,7 +136,7 @@ export default {
         namespaces.length > 0 || (namespaces.length === 0 && this.$store.state.modules.length > 0)
           ? this.getAggregationData()
           : this.getSearchData(this.query)
-      }, 1000),
+      }, 200),
     },
   },
 
