@@ -103,7 +103,7 @@ class Searcher {
     const cfg = {
       ...extra,
       method: 'get',
-      url: this.queryEndpoint(),
+      url: this.queryEndpoint(a),
       params,
     }
 

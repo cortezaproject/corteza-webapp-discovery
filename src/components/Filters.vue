@@ -1,16 +1,16 @@
 <template>
   <div>
-    <h4 class="mt-3 ml-2">
+    <h4 class="mt-3">
       {{ this.$t('title') }}
     </h4>
-    <div class="ml-2 mt-4">
+    <div class="mt-4">
       <span class="text-primary font-weight-bold">{{ this.$t('types.title') }}</span>
       <b-form-checkbox-group
         v-model="types"
         :options="options"
         name="types"
         stacked
-        class="ml-3 mt-1"
+        class="mt-1"
         @change="updateTypes()"
       />
     </div>
@@ -18,7 +18,7 @@
       <div
         v-for="(agg, index) in this.$store.state.aggregations"
         :key="index"
-        class="ml-2 mt-4"
+        class="mt-4"
       >
         <!--        <span class="">{{ selectName(agg.name) }} ({{ agg.hits }})</span>-->
         <b-row class="w-100">
@@ -43,7 +43,7 @@
         <b-form-checkbox-group
           v-model="groups[agg.name]"
           stacked
-          class="ml-3 mt-1"
+          class="mt-1"
           @change="updateGroup(agg.name)"
         >
           <b-form-checkbox

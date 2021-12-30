@@ -2,6 +2,8 @@
   <b-card
     no-body
     class="shadow-sm h-100"
+    @mouseover="$emit('hover', hit.value.recordID)"
+    @mouseleave="$emit('hover', undefined)"
   >
     <b-card-body class="d-flex flex-column">
       <!-- User -->
@@ -14,7 +16,7 @@
         >
           <b-row>
             <b-card-title
-              class="col-auto text-capitalize"
+              class="col-auto text-capitalize text-primary"
               title="User"
               title-tag="h5"
             />
@@ -23,8 +25,8 @@
 
         <!-- User fields -->
         <b-card-text
-          v-for="(item, index) in limitData('system:user', hit.value)"
-          :key="index"
+          v-for="(item, i) in limitData('system:user', hit.value)"
+          :key="i"
           :data="item"
           class="mb-2"
         >
@@ -32,7 +34,7 @@
             <b-col
               class="text-primary font-weight-bold text-capitalize"
             >
-              {{ index }}:
+              {{ i }}:
             </b-col>
             <b-col>
               {{ item }}
@@ -52,7 +54,7 @@
           <b-row>
             <b-card-title
               v-if="hit.value.name"
-              class="col-auto text-capitalize"
+              class="col-auto text-capitalize text-primary"
               :title="hit.value.name"
               title-tag="h5"
             />
@@ -61,8 +63,8 @@
 
         <!-- Namespace fields -->
         <b-card-text
-          v-for="(item, index) in limitData('compose:namespace', hit.value)"
-          :key="index"
+          v-for="(item, i) in limitData('compose:namespace', hit.value)"
+          :key="i"
           :data="item"
           class="mb-2"
         >
@@ -70,7 +72,7 @@
             <b-col
               class="text-primary font-weight-bold text-capitalize"
             >
-              {{ index }}:
+              {{ i }}:
             </b-col>
             <b-col>
               {{ item }}
@@ -85,51 +87,52 @@
       >
         <!-- Module title -->
         <b-card-text
-          class="mb-2"
+          class="d-flex align-items-center mb-3"
         >
-          <b-row>
-            <b-card-title
-              v-if="hit.value.namespace.name"
-              class="col-auto text-capitalize"
-              :title="hit.value.namespace.name"
-              title-tag="h5"
+          <h5
+            v-if="hit.value.namespace.name"
+            class="text-primary text-capitalize mb-0"
+          >
+            {{ hit.value.namespace.name }}
+          </h5>
+          <h5
+            v-if="hit.value.namespace.name"
+            class="text-primary mx-3 mb-0"
+          >
+            <b-icon
+              icon="arrow-right"
+              font-scale="1"
             />
-            <b-card-title
-              v-if="hit.value.namespace.name"
-              class="col-0"
-              title-tag="h5"
-            >
-              <b-icon
-                icon="arrow-right"
-                font-scale="1"
-              />
-            </b-card-title>
-            <b-card-title
-              class="col-auto text-capitalize"
-              :title="hit.value.name"
-              title-tag="h5"
-            />
-          </b-row>
+          </h5>
+          <h5
+            class="text-primary text-capitalize mb-0"
+          >
+            {{ hit.value.name }}
+          </h5>
+          <b-badge
+            v-if="Object.keys(hit.labels || { }).includes('federation')"
+            variant="primary"
+            class="ml-auto"
+          >
+            Federated
+          </b-badge>
         </b-card-text>
 
         <!-- Module fields -->
-        <b-card-text
-          v-for="(item, index) in limitData('compose:module', hit.value)"
-          :key="index"
-          :data="item"
-          class="mb-2"
+        <div
+          v-for="(item, name, i) in limitData('compose:module', hit.value)"
+          :key="i"
+          class="d-flex flex-column mb-3"
         >
-          <b-row>
-            <b-col
-              class="text-primary font-weight-bold text-capitalize"
-            >
-              {{ index }}:
-            </b-col>
-            <b-col>
-              {{ item }}
-            </b-col>
-          </b-row>
-        </b-card-text>
+          <label
+            class="text-capitalize text-primary mb-0"
+          >
+            {{ name }}
+          </label>
+          <div class="mt-2">
+            {{ item }}
+          </div>
+        </div>
       </b-overlay>
 
       <!-- Record -->
@@ -138,71 +141,81 @@
       >
         <!-- Record title -->
         <b-card-text
-          class="mb-2"
+          class="d-flex align-items-center mb-3"
         >
-          <b-row>
-            <b-card-title
-              v-if="hit.value.namespace.name"
-              class="col-auto text-capitalize"
-              :title="hit.value.namespace.name"
-              title-tag="h5"
+          <h5
+            v-if="hit.value.namespace.name"
+            class="text-primary text-capitalize mb-0"
+          >
+            {{ hit.value.namespace.name }}
+          </h5>
+          <h5
+            v-if="hit.value.namespace.name"
+            class="text-primary mx-3 mb-0"
+          >
+            <b-icon
+              icon="arrow-right"
+              font-scale="1"
             />
-            <b-card-title
-              v-if="hit.value.namespace.name"
-              class="col-0"
-              title-tag="h5"
-            >
-              <b-icon
-                icon="arrow-right"
-                font-scale="1"
-              />
-            </b-card-title>
-            <b-card-title
-              class="col-auto text-capitalize"
-              :title="hit.value.module.name"
-              title-tag="h5"
+          </h5>
+          <h5
+            class="text-primary text-capitalize mb-0"
+          >
+            {{ hit.value.module.name }}
+          </h5>
+          <h5
+            class="text-primary mx-3 mb-0"
+          >
+            <b-icon
+              icon="arrow-right"
+              font-scale="1"
             />
-          </b-row>
+          </h5>
+          <h5
+            class="text-primary text-capitalize mb-0"
+          >
+            Record
+          </h5>
+          <b-badge
+            v-if="Object.keys(hit.labels || { }).includes('federation')"
+            variant="primary"
+            class="ml-auto"
+          >
+            Federated
+          </b-badge>
         </b-card-text>
 
         <!-- Record fields -->
-        <b-card-text
-          v-for="(item, index) in limitData('compose:record', hit.value.values)"
-          :key="index"
-          :data="item"
-          class="mb-2"
+        <div
+          v-for="(item, i) in limitData('compose:record', hit.value.values)"
+          :key="i"
+          class="d-flex flex-column mb-3"
         >
-          <b-row>
-            <b-col
-              class="text-primary font-weight-bold text-capitalize"
-            >
-              {{ item.name }}:
-            </b-col>
-            <b-col>
-              {{ item.value }}
-            </b-col>
-          </b-row>
-        </b-card-text>
+          <label
+            class="text-capitalize text-primary mb-0"
+          >
+            {{ item.name }}
+          </label>
+          <p class="multiline mt-2 mb-0">
+            {{ item.value }}
+          </p>
+        </div>
       </b-overlay>
 
       <!-- Url to resource -->
-      <b-row
+      <div
         v-if="hit.value.url"
+        class="d-flex"
       >
-        <b-col
-          md="4"
-          sm="5"
+        <b-button
+          size="sm"
+          variant="primary"
+          :href="hit.value.url"
+          target="_blank"
         >
-          <b-button
-            size="sm"
-            variant="primary"
-            :href="hit.value.url"
-            target="_blank"
-          >
-            {{ this.$t('card.button-text') }}
-          </b-button>
-        </b-col>
-      </b-row>
+          {{ $t('card.button-text') }}
+        </b-button>
+      </div>
     </b-card-body>
   </b-card>
 </template>
@@ -213,9 +226,17 @@ export default {
     namespaces: 'search',
   },
   props: {
+    index: {
+      type: Number,
+      required: true,
+    },
     hit: {
       type: Object,
       default: null,
+    },
+    showMap: {
+      type: Boolean,
+      required: true,
     },
   },
   computed: {
@@ -248,7 +269,15 @@ export default {
   methods: {
     limitData (resourceType, list, limit = 5) {
       if (resourceType === 'compose:record') {
-        return list
+        return list.map(({ name, value = [] }) => {
+          if (value) {
+            value = value.map(v => {
+              return v.toString().includes('{"coordinates":[') ? ((JSON.parse(v || '{}') || {}).coordinates || []).join(', ') : v
+            }).join('\n')
+          }
+
+          return { name, value }
+        })
       } else {
         if (limit < 1) {
           return
@@ -256,7 +285,7 @@ export default {
         const out = {}
         let counter = 0
         for (const key in list) {
-          const value = list[key]
+          let value = list[key]
 
           // @todo fix all field mapping and send limited things on FE
           switch (resourceType) {
@@ -276,6 +305,14 @@ export default {
                 !!value &&
                 ['created', 'updated', 'meta', 'security', 'fields', 'url', 'namespace'].indexOf(key) < 0
               ) {
+                if (['deleted'].includes(key)) {
+                  if (value.at) {
+                    value = new Date(value.at).toLocaleString()
+                  } else {
+                    break
+                  }
+                }
+
                 out[key] = value
                 counter++
               }
@@ -287,8 +324,7 @@ export default {
                 counter < limit &&
                 !!value[0]
               ) {
-                // @todo for multiple value, will be fixed with dynamic field from response
-                out[key] = value[0]
+                out[key] = value
                 counter++
               }
               break
@@ -311,3 +347,9 @@ export default {
   },
 }
 </script>
+
+<style lang="scss" scoped>
+.multiline {
+  white-space: pre-line;
+}
+</style>

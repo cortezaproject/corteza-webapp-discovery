@@ -4,9 +4,7 @@
       <b-col
         :cols="map.show ? '5' : '12'"
       >
-        <b-input-group
-          :class="map.show ? '' : 'w-25'"
-        >
+        <b-input-group>
           <b-form-input
             v-model="query"
             :placeholder="this.$t('input-placeholder')"
@@ -32,19 +30,23 @@
         </b-input-group>
 
         <div
-          class="mb-3 text-muted"
+          class="px-1 mt-1 mb-3 text-muted"
         >
           {{ `${numberOfResults} ${this.$t('search-results')}` }}
         </div>
         <div
-          v-if="spinner"
+          v-if="processing"
           class="d-flex justify-content-center mt-5"
         >
           <b-spinner
             variant="primary"
           />
         </div>
-        <div v-if="filteredHits && !spinner">
+
+        <div
+          v-if="filteredHits && !processing"
+          class="h-100"
+        >
           <b-row
             align-h="start"
           >
@@ -52,21 +54,28 @@
               v-for="(hit, i) in filteredHits"
               :key="i"
               md="12"
-              lg="6"
-              xl="4"
+              :lg="map.show ? '12' : '6'"
+              :xl="map.show ? '12' : '4'"
               class="mb-4"
             >
-              <result-card :hit="hit" />
+              <result-card
+                :index="i"
+                :hit="hit"
+                :show-map="map.show"
+                @hover="map.hoverIndex = $event"
+              />
             </b-col>
           </b-row>
         </div>
       </b-col>
       <b-col
         v-if="map.show"
+        class="p-0"
       >
         <discovery-map
           class="sticky-top"
           :markers="map.markers"
+          :hover-index="map.hoverIndex"
         />
       </b-col>
     </b-row>
@@ -95,11 +104,12 @@ export default {
       hits: [],
       filteredHits: [],
 
-      spinner: false,
+      processing: false,
 
       map: {
         show: false,
         markers: [],
+        hoverIndex: undefined,
       },
     }
   },
@@ -114,7 +124,7 @@ export default {
     query: {
       handler: debounce(function (text) {
         this.getSearchData(text)
-      }, 700),
+      }, 400),
     },
 
     '$store.state.types': {
@@ -141,21 +151,25 @@ export default {
   },
 
   created () {
-    this.getSearchData('')
+    this.getAggregationData()
   },
 
   methods: {
-    getSearchData (query) {
+    getSearchData (query = '') {
+      this.processing = true
+
       this.deleteStates()
-      this.spinner = true
-      this.$SearcherAPI.query({ query }).then((response) => {
+
+      const modules = this.$store.state.modules
+      const namespaces = this.$store.state.namespaces
+
+      this.$SearcherAPI.query({ query, modules, namespaces }).then((response) => {
         if (response) {
           this.hits = response.hits
           if (response.hits) this.getFilteredData()
-          this.$store.commit('updateAggregations', response.aggregations)
 
           this.getMarkers()
-          this.spinner = false
+          this.processing = false
         }
       })
         .catch(this.toastErrorHandler(this.$t('notification.search-error')))
@@ -171,31 +185,40 @@ export default {
     },
 
     getAggregationData () {
+      this.processing = true
+
       const modules = this.$store.state.modules
       const namespaces = this.$store.state.namespaces
-      if (modules.length > 0 || namespaces.length > 0) {
-        this.spinner = true
-        this.$SearcherAPI.query({ query: '', modules, namespaces }).then(response => {
-          if (response) {
-            this.hits = response.hits
-            if (response.hits) {
-              this.getFilteredData()
-            }
-            this.spinner = false
-          }
-        })
-          .catch(this.toastErrorHandler(this.$t('notification.search-error')))
-      }
+
+      this.$SearcherAPI.query({ query: '', modules, namespaces }).then(response => {
+        if (response) {
+          this.hits = response.hits
+          if (response.hits) this.getFilteredData()
+
+          this.$store.commit('updateAggregations', response.aggregations)
+
+          this.getMarkers()
+          this.processing = false
+        }
+      })
+        .catch(this.toastErrorHandler(this.$t('notification.search-error')))
     },
 
     getMarkers () {
       const markers = []
 
       this.filteredHits.forEach(({ type, value }) => {
-        if (type === 'compose:record') {
-          let coordinates = (JSON.parse((value.values.find(({ name }) => name === 'Geo') || {}).value || '{}') || {}).coordinates || []
-          coordinates = coordinates.map(parseFloat)
-          markers.push({ id: value.recordID, coordinates })
+        if (type === 'compose:record' && Array.isArray(value.values)) {
+          let coordinates = (JSON.parse((value.values.find(({ name, value = [] }) => {
+            return value && value.find(v => {
+              return v.toString().includes('{"coordinates":[')
+            })
+          }) || {}).value || '{}') || {}).coordinates || []
+
+          if (coordinates.length) {
+            coordinates = coordinates.map(parseFloat)
+            markers.push({ id: value.recordID, coordinates })
+          }
         }
       })
 
@@ -206,8 +229,6 @@ export default {
       this.hits = null
       this.map.markers = []
       this.filteredHits.splice(0, this.filteredHits.length)
-      if (this.$store.state.modules.length > 0) this.$store.commit('updateModules', [])
-      if (this.$store.state.namespaces.length > 0) this.$store.commit('updateNamespaces', [])
     },
 
     toggleMap () {

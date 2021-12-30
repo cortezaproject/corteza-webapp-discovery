@@ -3,14 +3,24 @@ import { BootstrapVue, BootstrapVueIcons } from 'bootstrap-vue'
 import { FontAwesomeIcon, FontAwesomeLayers } from '@fortawesome/vue-fontawesome'
 
 import PortalVue from 'portal-vue'
-import VueLayers from 'vuelayers'
 import './faIcons'
 import { components } from '@cortezaproject/corteza-vue'
 
+import { LMap, LTileLayer, LMarker } from 'vue2-leaflet'
+import 'leaflet/dist/leaflet.css'
+import { Icon } from 'leaflet'
+
 Vue.use(PortalVue)
 
-Vue.use(VueLayers, {
-  dataProjection: 'EPSG:4326',
+Vue.component('l-map', LMap)
+Vue.component('l-tile-layer', LTileLayer)
+Vue.component('l-marker', LMarker)
+
+delete Icon.Default.prototype._getIconUrl
+Icon.Default.mergeOptions({
+  iconRetinaUrl: require('leaflet/dist/images/marker-icon-2x.png'),
+  iconUrl: require('leaflet/dist/images/marker-icon.png'),
+  shadowUrl: require('leaflet/dist/images/marker-shadow.png'),
 })
 
 Vue.use(BootstrapVue, {
