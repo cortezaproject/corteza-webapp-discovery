@@ -93,11 +93,13 @@ export default {
   },
   watch: {
     '$store.state.namespaces': {
+      immediate: true,
       handler: function (namespace) {
         this.groups.Namespace = namespace
       },
     },
     '$store.state.modules': {
+      immediate: true,
       handler: function (module) {
         this.groups.Module = module
       },
