@@ -3,12 +3,12 @@ import axios from 'axios'
 export default function (service, opt = {}) {
   if (!opt.baseURL) {
     // @ts-ignore
-    if (!window.SearcherAPI) {
-      throw new Error('config.js missing or window.SearcherAPI not set')
+    if (!window.CortezaDiscoveryAPI) {
+      throw new Error('config.js missing or window.CortezaDiscoveryAPI not set')
     }
 
     // @ts-ignore
-    opt.baseURL = `${window.SearcherAPI}/`
+    opt.baseURL = `${window.CortezaDiscoveryAPI}/`
   }
 
   return function (Vue) {
@@ -22,7 +22,7 @@ export default function (service, opt = {}) {
 
     // @ts-ignore
     // makes Vue.$<service>API (Vue.$SystemAPI, Vue.$ComposeAPI, Vue.$FederationAPI, Vue.$AutomationAPI) available
-    Vue.prototype.$SearcherAPI = new Searcher(opt)
+    Vue.prototype.$DiscoveryAPI = new Searcher(opt)
   }
 }
 

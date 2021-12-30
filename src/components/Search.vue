@@ -163,7 +163,7 @@ export default {
       const modules = this.$store.state.modules
       const namespaces = this.$store.state.namespaces
 
-      this.$SearcherAPI.query({ query, modules, namespaces }).then((response) => {
+      this.$DiscoveryAPI.query({ query, modules, namespaces }).then((response) => {
         if (response) {
           this.hits = response.hits
           if (response.hits) this.getFilteredData()
@@ -190,7 +190,7 @@ export default {
       const modules = this.$store.state.modules
       const namespaces = this.$store.state.namespaces
 
-      this.$SearcherAPI.query({ query: '', modules, namespaces }).then(response => {
+      this.$DiscoveryAPI.query({ query: '', modules, namespaces }).then(response => {
         if (response) {
           this.hits = response.hits
           if (response.hits) this.getFilteredData()
