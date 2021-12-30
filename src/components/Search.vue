@@ -1,39 +1,44 @@
 <template>
-  <b-container fluid>
-    <b-row>
+  <b-container
+    fluid
+  >
+    <b-row class="h-100">
       <b-col
         :cols="map.show ? '5' : '12'"
+        class="h-100 p-0"
       >
-        <b-input-group>
-          <b-form-input
-            v-model="query"
-            :placeholder="this.$t('input-placeholder')"
-            autocomplete="off"
-          />
-          <b-input-group-append>
-            <b-input-group-text class="text-primary bg-white">
-              <font-awesome-icon
-                :icon="['fas', 'search']"
-              />
-            </b-input-group-text>
-            <b-button
-              variant="light"
-              rounded
-              style="z-index: 100;"
-              @click="toggleMap"
-            >
-              <font-awesome-icon
-                :icon="['fas', 'map-marked-alt']"
-              />
-            </b-button>
-          </b-input-group-append>
-        </b-input-group>
+        <b-form-group class="px-3">
+          <b-input-group>
+            <b-form-input
+              v-model="query"
+              :placeholder="this.$t('input-placeholder')"
+              autocomplete="off"
+            />
+            <b-input-group-append>
+              <b-input-group-text class="text-primary bg-white">
+                <font-awesome-icon
+                  :icon="['fas', 'search']"
+                />
+              </b-input-group-text>
+              <b-button
+                variant="light"
+                rounded
+                style="z-index: 100;"
+                @click="toggleMap"
+              >
+                <font-awesome-icon
+                  :icon="['fas', 'map-marked-alt']"
+                />
+              </b-button>
+            </b-input-group-append>
+          </b-input-group>
+          <div
+            class="px-1 mt-1 text-muted"
+          >
+            {{ `${numberOfResults} ${this.$t('search-results')}` }}
+          </div>
+        </b-form-group>
 
-        <div
-          class="px-1 mt-1 mb-3 text-muted"
-        >
-          {{ `${numberOfResults} ${this.$t('search-results')}` }}
-        </div>
         <div
           v-if="processing"
           class="d-flex justify-content-center mt-5"
@@ -45,9 +50,10 @@
 
         <div
           v-if="filteredHits && !processing"
-          class="h-100"
+          class="mh-100 overflow-auto"
         >
           <b-row
+            class="w-100 m-0"
             align-h="start"
           >
             <b-col
@@ -73,7 +79,6 @@
         class="p-0"
       >
         <discovery-map
-          class="sticky-top"
           :markers="map.markers"
           :hover-index="map.hoverIndex"
         />
