@@ -109,13 +109,16 @@
           >
             {{ hit.value.name }}
           </h5>
-          <b-badge
-            v-if="Object.keys(hit.labels || { }).includes('federation')"
-            variant="primary"
-            class="ml-auto"
+          <h5
+            class="ml-auto mb-0"
           >
-            Federated
-          </b-badge>
+            <b-badge
+              v-if="Object.keys(hit.value.labels || { }).includes('federation')"
+              variant="light"
+            >
+              Federated
+            </b-badge>
+          </h5>
         </b-card-text>
 
         <!-- Module fields -->
@@ -176,13 +179,16 @@
           >
             Record
           </h5>
-          <b-badge
-            v-if="Object.keys(hit.labels || { }).includes('federation')"
-            variant="primary"
-            class="ml-auto"
+          <h5
+            class="ml-auto mb-0"
           >
-            Federated
-          </b-badge>
+            <b-badge
+              v-if="Object.keys(hit.value.labels || { }).includes('federation')"
+              variant="light"
+            >
+              Federated
+            </b-badge>
+          </h5>
         </b-card-text>
 
         <!-- Record fields -->
@@ -303,7 +309,7 @@ export default {
               if (
                 counter < limit &&
                 !!value &&
-                ['created', 'updated', 'meta', 'security', 'fields', 'url', 'namespace'].indexOf(key) < 0
+                ['created', 'updated', 'meta', 'security', 'fields', 'url', 'namespace', 'labels'].indexOf(key) < 0
               ) {
                 if (['deleted'].includes(key)) {
                   if (value.at) {
@@ -332,7 +338,7 @@ export default {
               if (
                 counter < limit &&
                 !!value &&
-                ['created', 'updated', 'security'].indexOf(key) < 0
+                ['created', 'updated', 'security', 'labels'].indexOf(key) < 0
               ) {
                 out[key] = value
                 counter++
