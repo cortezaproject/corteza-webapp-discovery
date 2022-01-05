@@ -9,11 +9,12 @@
       :attribution="attribution"
     />
     <l-marker
-      v-for="marker in markers"
-      :key="marker.id"
+      v-for="(marker, i) in markers"
+      :key="i"
       :lat-lng="getLatLng(marker.coordinates)"
-      :opacity="hoverIndex === marker.id ? 1.0 : 0.6"
-      @click="clicked"
+      :opacity="[hoverIndex, hoveredMarker].includes(marker.id) ? 1.0 : 0.6"
+      @mouseover="onMarkerMouseOver(marker.id)"
+      @mouseleave="onMarkerMouseLeave(marker.id)"
     />
   </l-map>
 </template>
@@ -39,6 +40,7 @@ export default {
       center: [30, 30],
       rotation: 0,
       attribution: '&copy; <a target="_blank" href="http://osm.org/copyright">OpenStreetMap</a>',
+      hoveredMarker: undefined,
     }
   },
 
@@ -47,8 +49,14 @@ export default {
       return latLng(coordinates[0], coordinates[1])
     },
 
-    clicked (e) {
-      console.log(e)
+    onMarkerMouseOver (ID) {
+      this.hoveredMarker = ID
+      this.$emit('hover', this.hoveredMarker)
+    },
+
+    onMarkerMouseLeave () {
+      this.hoveredMarker = undefined
+      this.$emit('hover', this.hoveredMarker)
     },
   },
 }

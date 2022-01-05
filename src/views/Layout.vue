@@ -35,7 +35,7 @@
       </c-sidebar>
     </aside>
 
-    <main class="d-inline-flex mh-100">
+    <main class="d-inline-flex h-100">
       <!--
         Content spacer
         Large and xl screens should push in content when the nav is expanded

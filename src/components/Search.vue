@@ -1,17 +1,20 @@
 <template>
   <b-container
     fluid
+    class="h-100 mh-100"
   >
     <b-row class="h-100">
       <b-col
         :cols="map.show ? '5' : '12'"
-        class="h-100 p-0"
+        class="h-100 mh-100 p-0"
       >
         <b-form-group class="px-3">
-          <b-input-group>
+          <b-input-group
+            size="lg"
+          >
             <b-form-input
               v-model="query"
-              :placeholder="this.$t('input-placeholder')"
+              :placeholder="$t('input-placeholder')"
               autocomplete="off"
             />
             <b-input-group-append>
@@ -22,7 +25,6 @@
               </b-input-group-text>
               <b-button
                 variant="light"
-                rounded
                 style="z-index: 100;"
                 @click="toggleMap"
               >
@@ -35,7 +37,7 @@
           <div
             class="px-1 mt-1 text-muted"
           >
-            {{ `${numberOfResults} ${this.$t('search-results')}` }}
+            {{ `${numberOfResults} ${$t('search-results')}` }}
           </div>
         </b-form-group>
 
@@ -53,8 +55,7 @@
           class="mh-100 overflow-auto"
         >
           <b-row
-            class="w-100 m-0"
-            align-h="start"
+            class="w-100 m-0 mh-100"
           >
             <b-col
               v-for="(hit, i) in filteredHits"
@@ -62,18 +63,21 @@
               md="12"
               :lg="map.show ? '12' : '6'"
               :xl="map.show ? '12' : '4'"
-              class="mb-4"
+              class="py-3"
             >
               <result-card
+                :id="hit.value.recordID || hit.value.moduleID"
                 :index="i"
                 :hit="hit"
                 :show-map="map.show"
+                :class="{ 'border-primary border shadow': map.clickedMarker && [hit.value.recordID, hit.value.moduleID].includes(map.clickedMarker) }"
                 @hover="map.hoverIndex = $event"
               />
             </b-col>
           </b-row>
         </div>
       </b-col>
+
       <b-col
         v-if="map.show"
         class="p-0"
@@ -81,6 +85,7 @@
         <discovery-map
           :markers="map.markers"
           :hover-index="map.hoverIndex"
+          @hover="markerHovered"
         />
       </b-col>
     </b-row>
@@ -114,6 +119,7 @@ export default {
       map: {
         show: false,
         markers: [],
+        clickedMarker: undefined,
         hoverIndex: undefined,
       },
     }
@@ -214,20 +220,33 @@ export default {
 
       this.filteredHits.forEach(({ type, value }) => {
         if (type === 'compose:record' && Array.isArray(value.values)) {
-          let coordinates = (JSON.parse((value.values.find(({ name, value = [] }) => {
-            return value && value.find(v => {
+          const id = value.recordID
+          value.values.forEach(({ value = [] }) => {
+            const isGeometry = value && value.find(v => {
               return v.toString().includes('{"coordinates":[')
             })
-          }) || {}).value || '{}') || {}).coordinates || []
 
-          if (coordinates.length) {
-            coordinates = coordinates.map(parseFloat)
-            markers.push({ id: value.recordID, coordinates })
-          }
+            if (isGeometry) {
+              value.forEach(coordinates => {
+                coordinates = JSON.parse(coordinates || '{}').coordinates
+                if (coordinates) {
+                  markers.push({ id, coordinates })
+                }
+              })
+            }
+          })
         }
       })
 
       this.map.markers = markers
+    },
+
+    markerHovered (ID) {
+      // document.getElementById(ID).scrollIntoView({
+      //   behavior: "smooth"
+      // })
+
+      this.map.clickedMarker = ID
     },
 
     deleteStates () {
