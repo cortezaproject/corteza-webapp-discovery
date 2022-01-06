@@ -3,7 +3,7 @@
     fluid
     class="h-100 mh-100"
   >
-    <b-row class="h-100">
+    <b-row class="mh-100 h-100">
       <b-col
         :cols="map.show ? '5' : '12'"
         class="h-100 mh-100 p-0"
@@ -52,7 +52,7 @@
 
         <div
           v-if="filteredHits && !processing"
-          class="mh-100 overflow-auto"
+          class="results"
         >
           <b-row
             class="w-100 m-0 mh-100"
@@ -114,6 +114,7 @@ export default {
       hits: [],
       filteredHits: [],
 
+      initial: false,
       processing: false,
 
       map: {
@@ -134,6 +135,7 @@ export default {
   watch: {
     query: {
       handler: debounce(function (text) {
+        if (this.initial) return
         this.getSearchData(text)
       }, 400),
     },
@@ -146,6 +148,7 @@ export default {
 
     '$store.state.modules': {
       handler: debounce(function (modules) {
+        if (this.initial) return
         modules.length > 0 || (modules.length === 0 && this.$store.state.namespaces.length > 0)
           ? this.getAggregationData()
           : this.getSearchData(this.query)
@@ -154,6 +157,7 @@ export default {
 
     '$store.state.namespaces': {
       handler: debounce(function (namespaces) {
+        if (this.initial) return
         namespaces.length > 0 || (namespaces.length === 0 && this.$store.state.modules.length > 0)
           ? this.getAggregationData()
           : this.getSearchData(this.query)
@@ -162,7 +166,22 @@ export default {
   },
 
   created () {
+    this.initial = true
     this.getAggregationData()
+
+    const { query = '', modules = [], namespaces = [] } = this.$route.query
+
+    this.query = query
+    this.$store.commit('updateModules', Array.isArray(modules) ? modules : [modules])
+    this.$store.commit('updateNamespaces', Array.isArray(namespaces) ? namespaces : [namespaces])
+
+    if (query || modules.length || namespaces.length) {
+      this.getSearchData(this.query)
+    }
+
+    setTimeout(() => {
+      this.initial = false
+    }, 1000)
   },
 
   methods: {
@@ -173,6 +192,8 @@ export default {
 
       const modules = this.$store.state.modules
       const namespaces = this.$store.state.namespaces
+
+      this.updateRouteQuery({ query, modules, namespaces })
 
       this.$DiscoveryAPI.query({ query, modules, namespaces }).then((response) => {
         if (response) {
@@ -201,7 +222,11 @@ export default {
       const modules = this.$store.state.modules
       const namespaces = this.$store.state.namespaces
 
-      this.$DiscoveryAPI.query({ query: '', modules, namespaces }).then(response => {
+      if (!this.initial) {
+        this.updateRouteQuery({ query: this.query, modules, namespaces })
+      }
+
+      this.$DiscoveryAPI.query({ modules, namespaces }).then(response => {
         if (response) {
           this.hits = response.hits
           if (response.hits) this.getFilteredData()
@@ -242,9 +267,10 @@ export default {
     },
 
     markerHovered (ID) {
-      // document.getElementById(ID).scrollIntoView({
-      //   behavior: "smooth"
-      // })
+      document.getElementById(ID).scrollIntoView({
+        behavior: 'smooth',
+        block: 'center',
+      })
 
       this.map.clickedMarker = ID
     },
@@ -258,11 +284,23 @@ export default {
     toggleMap () {
       this.map.show = !this.map.show
     },
+
+    updateRouteQuery ({ query = undefined, modules = [], namespaces = [] }) {
+      if (JSON.stringify(this.$route.query) !== JSON.stringify({ query, modules, namespaces })) {
+        this.$router.push({ query: { query: query || undefined, modules, namespaces } })
+      }
+    },
   },
 }
 </script>
 
 <style lang="scss" scoped>
+.results {
+  overflow-y: auto;
+  overflow-x: hidden;
+  max-height: calc(100vh - 0.6rem - 1.5rem - 1rem - 4px - 0.25rem - 0.9rem - 1rem - 64px);
+}
+
 .toolbar {
   bottom: 0;
   right: 0;
