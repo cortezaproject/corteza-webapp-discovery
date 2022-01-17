@@ -15,7 +15,7 @@
         }"
       >
         <template #title>
-          Corteza
+          Discovery
         </template>
       </c-topbar>
     </header>

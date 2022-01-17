@@ -1,7 +1,7 @@
 <template>
   <b-container
     fluid
-    class="h-100 mh-100"
+    class="h-100 mh-100 ml-2"
   >
     <b-row class="mh-100 h-100">
       <b-col
@@ -23,32 +23,33 @@
                   :icon="['fas', 'search']"
                 />
               </b-input-group-text>
-              <b-button
-                variant="light"
-                style="z-index: 100;"
-                @click="toggleMap"
-              >
-                <font-awesome-icon
-                  :icon="['fas', 'map-marked-alt']"
-                />
-              </b-button>
             </b-input-group-append>
           </b-input-group>
+
           <div
             class="px-1 mt-1 text-muted"
+            :class="{ 'discovering': processing }"
           >
-            {{ `${numberOfResults} ${$t('search-results')}` }}
+            {{ processing ? 'Discovering' : `${numberOfResults} ${$t('search-results')}` }}
           </div>
         </b-form-group>
 
-        <div
-          v-if="processing"
-          class="d-flex justify-content-center mt-5"
+        <h5
+          v-if="processing || !numberOfResults"
+          class="d-flex align-items-center justify-content-center"
+          style="height: 65vh;"
         >
           <b-spinner
+            v-if="processing"
             variant="primary"
+            class="p-5"
           />
-        </div>
+          <span
+            v-else-if="!numberOfResults"
+          >
+            No results
+          </span>
+        </h5>
 
         <div
           v-if="filteredHits && !processing"
@@ -75,6 +76,21 @@
               />
             </b-col>
           </b-row>
+        </div>
+
+        <div
+          class="d-flex fixed-bottom"
+        >
+          <b-button
+            variant="warning"
+            class="ml-auto m-3 rounded-circle p-3"
+            @click="toggleMap"
+          >
+            <font-awesome-icon
+              :icon="['fas', 'map-marked-alt']"
+              class="h3 mb-0"
+            />
+          </b-button>
         </div>
       </b-col>
 
@@ -147,21 +163,17 @@ export default {
     },
 
     '$store.state.modules': {
-      handler: debounce(function (modules) {
+      handler: debounce(function () {
         if (this.initial) return
-        modules.length > 0 || (modules.length === 0 && this.$store.state.namespaces.length > 0)
-          ? this.getAggregationData()
-          : this.getSearchData(this.query)
-      }, 200),
+        this.getSearchData(this.query)
+      }, 400),
     },
 
     '$store.state.namespaces': {
-      handler: debounce(function (namespaces) {
+      handler: debounce(function () {
         if (this.initial) return
-        namespaces.length > 0 || (namespaces.length === 0 && this.$store.state.modules.length > 0)
-          ? this.getAggregationData()
-          : this.getSearchData(this.query)
-      }, 200),
+        this.getSearchData(this.query)
+      }, 400),
     },
   },
 
@@ -304,5 +316,26 @@ export default {
 .toolbar {
   bottom: 0;
   right: 0;
+}
+
+.map-button {
+  position: relative;
+  bottom: 0;
+  right: 0;
+}
+
+// https://stackoverflow.com/a/40991531/17926309
+.discovering::after {
+  display: inline-block;
+  animation: discovering steps(1, end) 1s infinite;
+  content: '';
+}
+
+@keyframes discovering {
+  0% { content: ''; }
+  25% { content: '.'; }
+  50% { content: '..'; }
+  75% { content: '...'; }
+  100% { content: ''; }
 }
 </style>
