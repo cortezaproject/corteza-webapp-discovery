@@ -124,6 +124,7 @@
             <b-badge
               v-if="Object.keys(hit.value.labels || { }).includes('federation')"
               variant="light"
+              class="mr-1"
             >
               Federated
             </b-badge>
@@ -179,19 +180,6 @@
             <span>
               {{ hit.value.module.name || hit.value.module.handle }}
             </span>
-            <span
-              class="mx-2"
-            >
-              <b-icon
-                icon="arrow-right"
-                font-scale="1"
-              />
-            </span>
-            <span
-              class="text-primary text-capitalize mb-0"
-            >
-              Record
-            </span>
           </h5>
 
           <h5
@@ -200,6 +188,7 @@
             <b-badge
               v-if="Object.keys(hit.value.labels || { }).includes('federation')"
               variant="light"
+              class="mr-1"
             >
               Federated
             </b-badge>
@@ -221,7 +210,7 @@
           <label
             class="text-capitalize text-primary mb-0"
           >
-            {{ item.label }}
+            {{ item.label || item.name }}
           </label>
           <p class="multiline mt-1 mb-0">
             {{ item.value }}
@@ -280,7 +269,7 @@ export default {
             }).join('\n')
           }
 
-          return { label, value }
+          return { name, label, value }
         })
       } else {
         if (limit < 1) {

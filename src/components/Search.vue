@@ -212,6 +212,8 @@ export default {
           this.hits = response.hits
           if (response.hits) this.getFilteredData()
 
+          this.$store.commit('updateAggregations', response.aggregations)
+
           this.getMarkers()
           this.processing = false
         }
