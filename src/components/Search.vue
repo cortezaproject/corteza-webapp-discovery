@@ -6,6 +6,8 @@
     <b-row class="mh-100 h-100">
       <b-col
         :cols="map.show ? '5' : '12'"
+        :lg="map.show ? '6' : '12'"
+        :xl="map.show ? '8' : '12'"
         class="h-100 mh-100 p-0"
       >
         <b-form-group class="px-3">
@@ -62,8 +64,8 @@
               v-for="(hit, i) in filteredHits"
               :key="i"
               md="12"
-              :lg="map.show ? '12' : '6'"
-              :xl="map.show ? '12' : '4'"
+              :lg="map.show ? '12' : '4'"
+              :xl="map.show ? '4' : '3'"
               class="py-3"
             >
               <result-card
@@ -79,7 +81,7 @@
         </div>
 
         <div
-          class="d-flex fixed-bottom"
+          class="position-fixed map-button"
         >
           <b-button
             variant="warning"
@@ -317,15 +319,10 @@ export default {
   max-height: calc(100vh - 0.6rem - 1.5rem - 1rem - 4px - 0.25rem - 0.9rem - 1rem - 64px);
 }
 
-.toolbar {
-  bottom: 0;
-  right: 0;
-}
-
 .map-button {
-  position: relative;
   bottom: 0;
   right: 0;
+  z-index: 99999;
 }
 
 // https://stackoverflow.com/a/40991531/17926309

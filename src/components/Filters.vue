@@ -1,7 +1,9 @@
 <template>
   <div>
     <div class="my-2">
-      <span class="text-primary font-weight-bold">{{ this.$t('types.title') }}</span>
+      <h6 class="text-primary mb-2">
+        {{ this.$t('types.title') }}
+      </h6>
       <b-form-checkbox-group
         v-model="types"
         name="types"
@@ -13,6 +15,7 @@
           v-for="option in options"
           :key="option.value"
           :value="option.value"
+          class="ml-2"
         >
           <div
             class="d-flex align-items-center mb-0"
@@ -20,13 +23,6 @@
             <span class="d-inline-block text-truncate mr-3">
               {{ option.text }}
             </span>
-            <b-badge
-              :variant="option.variant"
-              class="ml-auto"
-              style="height: 100%; width: 1.7em;"
-            >
-              {{ option.text.charAt(0).toUpperCase() }}
-            </b-badge>
           </div>
         </b-form-checkbox>
       </b-form-checkbox-group>
@@ -38,36 +34,45 @@
         :key="index"
         class="mt-4"
       >
-        <hr>
-
-        <h6
-          class="d-flex align-items-center mb-0"
+        <div
+          class="d-flex justify-content-between align-items-center"
+          style="min-height: 25px;"
         >
-          {{ agg.name }}
+          <h6
+            class="text-primary d-flex mb-0"
+          >
+            {{ agg.name }}
+            <b-badge
+              v-if="(groups[agg.name] || []).length"
+              variant="dark"
+              pill
+              class="ml-1 align-self-center"
+            >
+              {{ (groups[agg.name] || []).length }}
+            </b-badge>
+          </h6>
           <b-button
             v-if="(groups[agg.name] || []).length"
-            variant="dark"
+            variant="link"
+            class="text-muted p-0 m-0"
             size="sm"
-            pill
-            class="ml-2"
             @click="clearGroup(agg.name)"
           >
-            <h5 class="small mb-0">
-              {{ (groups[agg.name] || []).length }}
-            </h5>
+            Reset
           </b-button>
-        </h6>
+        </div>
 
         <b-form-checkbox-group
           v-model="groups[agg.name]"
           stacked
-          class="mt-1"
+          class="mt-1 ml-2"
           @change="updateGroup(agg.name)"
         >
           <b-form-checkbox
             v-for="(resource, i) in agg.resource_name"
             :key="i"
             :value="resource.name"
+            class="mb-1"
           >
             <div
               class="d-flex align-items-center"
@@ -76,7 +81,7 @@
                 {{ getResourceDisplayName(agg.resource, resource) }}
               </span>
               <span
-                class="pl-3 ml-auto"
+                class="pl-3 ml-auto text-muted"
               >
                 {{ resource.hits }}
               </span>
@@ -107,10 +112,10 @@ export default {
   computed: {
     options () {
       return [
-        { text: this.$t('types.namespace'), value: 'compose:namespace', variant: 'success' },
-        { text: this.$t('types.module'), value: 'compose:module', variant: 'warning' },
-        { text: this.$t('types.record'), value: 'compose:record', variant: 'info' },
-        { text: this.$t('types.user'), value: 'system:user', variant: 'secondary' },
+        { text: this.$t('types.namespace'), value: 'compose:namespace' },
+        { text: this.$t('types.module'), value: 'compose:module' },
+        { text: this.$t('types.record'), value: 'compose:record' },
+        { text: this.$t('types.user'), value: 'system:user' },
       ]
     },
   },

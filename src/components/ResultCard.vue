@@ -2,36 +2,56 @@
   <b-card
     no-body
     class="shadow-sm h-100"
+    :class="{ 'hover-effect': hit.value.url }"
     @mouseover="$emit('hover', hit.value.recordID)"
     @mouseleave="$emit('hover', undefined)"
   >
-    <b-card-body class="d-flex flex-column">
-      <!-- User -->
-      <b-overlay
-        v-if="hit.type === 'system:user'"
+    <a
+      v-if="hit.value.url"
+      :href="hit.value.url"
+      target="_blank"
+      class="stretched-link"
+    />
+    <!--    User-->
+    <b-overlay
+      v-if="hit.type === 'system:user'"
+    >
+      <!-- User title -->
+      <b-card-header
+        header-bg-variant="white"
+        class="border-bottom"
       >
-        <!-- User title -->
-        <b-card-text
-          class="d-flex align-items-center mb-3"
-        >
+        <div class="d-flex align-items-center mb-3 justify-content-between">
           <h5
             class="text-primary text-capitalize text-truncate mr-2 mb-0"
           >
             User
           </h5>
 
-          <h5
-            class="d-flex align-items-center ml-auto mb-0"
-          >
-            <b-badge
-              variant="secondary"
-            >
-              U
-            </b-badge>
-          </h5>
-        </b-card-text>
+          <b-avatar
+            size="sm"
+            :title="hit.type"
+            class="align-center bg-light text-dark"
+          />
+        </div>
+        <div class="d-flex justify-content-between small">
+          <span class="text-truncate text-nowrap mr-1">
+            <b-icon-person />
+            John Doe
+          </span>
+          <span class="text-nowrap mr-1">
+            <b-icon-calendar />
+            10 Jan 2020
+          </span>
+          <span class="text-nowrap">
+            <b-icon-pencil-square />
+            10 Jan 2020
+          </span>
+        </div>
+      </b-card-header>
 
-        <!-- User fields -->
+      <!-- User fields -->
+      <b-card-body class="pb-0">
         <div
           v-for="(value, key, i) in limitData('system:user', hit.value)"
           :key="i"
@@ -46,34 +66,49 @@
             {{ value }}
           </div>
         </div>
-      </b-overlay>
+      </b-card-body>
+    </b-overlay>
 
-      <!-- Namespace -->
-      <b-overlay
-        v-if="hit.type === 'compose:namespace'"
+    <!-- Namespace -->
+    <b-overlay
+      v-if="hit.type === 'compose:namespace'"
+    >
+      <!-- Namespace title -->
+      <b-card-header
+        header-bg-variant="white"
+        class="border-bottom"
       >
-        <!-- Namespace title -->
-        <b-card-text
-          class="d-flex align-items-center mb-3"
-        >
+        <div class="d-flex align-items-center mb-3 justify-content-between">
           <h5
             class="text-primary text-capitalize text-truncate mr-2 mb-0"
           >
             {{ hit.value.name || hit.value.slug }}
           </h5>
+          <b-avatar
+            size="sm"
+            :title="hit.type"
+            icon="code-square"
+            class="align-center bg-light text-dark"
+          />
+        </div>
+        <div class="d-flex justify-content-between small">
+          <span class="text-truncate text-nowrap mr-1">
+            <b-icon-person />
+            John Doe
+          </span>
+          <span class="text-nowrap mr-1">
+            <b-icon-calendar />
+            10 Jan 2020
+          </span>
+          <span class="text-nowrap">
+            <b-icon-pencil-square />
+            10 Jan 2020
+          </span>
+        </div>
+      </b-card-header>
 
-          <h5
-            class="d-flex align-items-center ml-auto mb-0"
-          >
-            <b-badge
-              variant="success"
-            >
-              N
-            </b-badge>
-          </h5>
-        </b-card-text>
-
-        <!-- Namespace fields -->
+      <!-- Namespace fields -->
+      <b-card-body class="pb-0">
         <div
           v-for="(item, name, i) in limitData('compose:module', hit.value)"
           :key="i"
@@ -88,16 +123,19 @@
             {{ item }}
           </div>
         </div>
-      </b-overlay>
+      </b-card-body>
+    </b-overlay>
 
-      <!-- Module -->
-      <b-overlay
-        v-if="hit.type === 'compose:module'"
+    <!-- Module -->
+    <b-overlay
+      v-if="hit.type === 'compose:module'"
+    >
+      <!-- Module title -->
+      <b-card-header
+        header-bg-variant="white"
+        class="border-bottom"
       >
-        <!-- Module title -->
-        <b-card-text
-          class="d-flex align-items-center mb-3"
-        >
+        <div class="d-flex align-items-center mb-3 justify-content-between">
           <h5 class="text-primary text-capitalize text-truncate mr-2 mb-0">
             <span
               v-if="hit.value.namespace.name || hit.value.namespace.handle"
@@ -117,27 +155,40 @@
               {{ hit.value.name || hit.value.handle }}
             </span>
           </h5>
-
-          <h5
-            class="d-flex align-items-center ml-auto mb-0"
-          >
+          <span class="text-nowrap">
             <b-badge
               v-if="Object.keys(hit.value.labels || { }).includes('federation')"
               variant="light"
-              class="mr-1"
+              class="mr-1 h5 p-2 mb-0"
             >
               Federated
             </b-badge>
+            <b-avatar
+              size="sm"
+              :title="hit.type"
+              icon="file-earmark-text"
+              class="align-center bg-light text-dark"
+            />
+          </span>
+        </div>
+        <div class="d-flex justify-content-between small">
+          <span class="text-truncate text-nowrap mr-1">
+            <b-icon-person />
+            John Doe
+          </span>
+          <span class="text-nowrap mr-1">
+            <b-icon-calendar />
+            10 Jan 2020
+          </span>
+          <span class="text-nowrap">
+            <b-icon-pencil-square />
+            10 Jan 2020
+          </span>
+        </div>
+      </b-card-header>
 
-            <b-badge
-              variant="warning"
-            >
-              M
-            </b-badge>
-          </h5>
-        </b-card-text>
-
-        <!-- Module fields -->
+      <!-- Module fields -->
+      <b-card-body class="pb-0">
         <div
           v-for="(item, name, i) in limitData('compose:module', hit.value)"
           :key="i"
@@ -152,16 +203,20 @@
             {{ item }}
           </div>
         </div>
-      </b-overlay>
+      </b-card-body>
+    </b-overlay>
 
-      <!-- Record -->
-      <b-overlay
-        v-if="hit.type === 'compose:record'"
+    <!-- Record -->
+    <b-overlay
+      v-if="hit.type === 'compose:record'"
+      class="h-100"
+    >
+      <!-- Record title -->
+      <b-card-header
+        header-bg-variant="white"
+        class="border-bottom"
       >
-        <!-- Record title -->
-        <b-card-text
-          class="d-flex align-items-center mb-3"
-        >
+        <div class="d-flex align-items-center mb-3 justify-content-between">
           <h5 class="text-primary text-capitalize text-truncate mr-2 mb-0">
             <span
               v-if="hit.value.namespace.name || hit.value.namespace.handle"
@@ -181,27 +236,40 @@
               {{ hit.value.module.name || hit.value.module.handle }}
             </span>
           </h5>
-
-          <h5
-            class="d-flex align-items-center ml-auto mb-0"
-          >
+          <span class="text-nowrap">
             <b-badge
               v-if="Object.keys(hit.value.labels || { }).includes('federation')"
               variant="light"
-              class="mr-1"
+              class="mr-1 h5 p-2 mb-0"
             >
               Federated
             </b-badge>
+            <b-avatar
+              size="sm"
+              :title="hit.type"
+              icon="list-ul"
+              class="align-center bg-light text-dark"
+            />
+          </span>
+        </div>
+        <div class="d-flex justify-content-between small">
+          <span class="text-truncate text-nowrap mr-1">
+            <b-icon-person />
+            John Doe
+          </span>
+          <span class="text-nowrap mr-1">
+            <b-icon-calendar />
+            10 Jan 2020
+          </span>
+          <span class="text-nowrap">
+            <b-icon-pencil-square />
+            10 Jan 2020
+          </span>
+        </div>
+      </b-card-header>
 
-            <b-badge
-              variant="info"
-            >
-              R
-            </b-badge>
-          </h5>
-        </b-card-text>
-
-        <!-- Record fields -->
+      <!-- Record fields -->
+      <b-card-body class="pb-0">
         <div
           v-for="(item, i) in limitData('compose:record', hit.value)"
           :key="i"
@@ -216,23 +284,8 @@
             {{ item.value }}
           </p>
         </div>
-      </b-overlay>
-
-      <!-- Url to resource -->
-      <div
-        v-if="hit.value.url"
-        class="d-flex"
-      >
-        <b-button
-          size="sm"
-          variant="primary"
-          :href="hit.value.url"
-          target="_blank"
-        >
-          {{ $t('card.button-text') }}
-        </b-button>
-      </div>
-    </b-card-body>
+      </b-card-body>
+    </b-overlay>
   </b-card>
 </template>
 
@@ -352,5 +405,13 @@ export default {
 <style lang="scss" scoped>
 .multiline {
   white-space: pre-line;
+}
+
+.hover-effect {
+  &:hover {
+    transition: all 0.2s ease;
+    box-shadow: 0 4px 8px rgba(38, 38, 38, 0.2) !important;
+    top: -2px;
+  }
 }
 </style>
