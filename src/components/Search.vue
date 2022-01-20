@@ -68,7 +68,7 @@
               :xl="map.show ? '4' : '3'"
               class="py-3"
             >
-              <result-card
+              <result
                 :id="hit.value.recordID || hit.value.moduleID"
                 :index="i"
                 :hit="hit"
@@ -111,7 +111,7 @@
 </template>
 
 <script>
-import ResultCard from '../components/ResultCard.vue'
+import Result from './Results'
 import { debounce } from 'lodash'
 import DiscoveryMap from './DiscoveryMap.vue'
 
@@ -121,7 +121,7 @@ export default {
   },
 
   components: {
-    ResultCard,
+    Result,
     DiscoveryMap,
   },
 
