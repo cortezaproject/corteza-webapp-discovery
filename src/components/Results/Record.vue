@@ -51,19 +51,29 @@
 
     <b-card-body class="pb-0">
       <div
-        v-for="(item, i) in limitData()"
-        :key="i"
-        class="d-flex flex-column mb-3"
+        v-if="limitData().length"
       >
-        <label
-          class="text-capitalize text-primary mb-0"
+        <div
+          v-for="(item, i) in limitData()"
+          :key="i"
+          class="d-flex flex-column mb-3"
         >
-          {{ item.label || item.name }}
-        </label>
-        <p class="multiline mt-1 mb-0">
-          {{ item.value }}
-        </p>
+          <label
+            class="text-capitalize text-primary mb-0"
+          >
+            {{ item.label || item.name }}
+          </label>
+          <p class="multiline mt-1 mb-0">
+            {{ item.value }}
+          </p>
+        </div>
       </div>
+
+      <p
+        v-else
+      >
+        No values
+      </p>
     </b-card-body>
   </b-overlay>
 </template>
@@ -78,7 +88,7 @@ export default {
     limitData () {
       const { values = [] } = this.hit.value
 
-      return values.map(({ name, label, value = [] }) => {
+      return (values || []).map(({ name, label, value = [] }) => {
         if (value) {
           value = value.map(v => {
             return v.toString().includes('{"coordinates":[') ? ((JSON.parse(v || '{}') || {}).coordinates || []).join(', ') : v
