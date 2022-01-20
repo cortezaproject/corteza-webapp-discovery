@@ -20,6 +20,17 @@
               autocomplete="off"
             />
             <b-input-group-append>
+              <b-button
+                v-if="query"
+                variant="link"
+                class="bg-white border-left-0"
+                style="border: 2px solid #E4E9EF;"
+                @click="query = ''"
+              >
+                <font-awesome-icon
+                  :icon="['fas', 'times']"
+                />
+              </b-button>
               <b-input-group-text class="text-primary bg-white">
                 <font-awesome-icon
                   :icon="['fas', 'search']"
