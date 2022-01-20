@@ -18,17 +18,26 @@
       v-bind="$props"
     >
       <template #header>
-        <span class="text-truncate text-nowrap mr-1">
+        <span
+          v-if="createdBy"
+          class="text-truncate text-nowrap mr-1"
+        >
           <b-icon-person />
-          John Doe
+          {{ createdBy }}
         </span>
-        <span class="text-nowrap mr-1">
+        <span
+          v-if="createdAt"
+          class="text-nowrap mr-1"
+        >
           <b-icon-calendar />
-          10 Jan 2020
+          {{ createdAt }}
         </span>
-        <span class="text-nowrap">
+        <span
+          v-if="updatedAt"
+          class="text-nowrap"
+        >
           <b-icon-pencil-square />
-          10 Jan 2020
+          {{ updatedAt }}
         </span>
       </template>
     </component>
@@ -58,6 +67,21 @@ export default {
       const i = keys.map(c => c.toLocaleLowerCase()).findIndex(c => c === type)
 
       return Results[keys[i]]
+    },
+
+    createdBy () {
+      const { by } = this.hit.value.created || {}
+      return by
+    },
+
+    createdAt () {
+      const { at } = this.hit.value.created || {}
+      return at ? new Date(at).toLocaleDateString() : at
+    },
+
+    updatedAt () {
+      const { at } = this.hit.value.updated || {}
+      return at ? new Date(at).toLocaleDateString() : at
     },
   },
 }
