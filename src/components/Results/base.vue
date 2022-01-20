@@ -17,8 +17,14 @@ export default {
 
   data () {
     return {
-      blacklistedFields: ['created', 'updated', 'security'],
+      defaultBlacklistedFields: ['deleted', 'created', 'updated', 'security'],
     }
+  },
+
+  computed: {
+    blacklistedFields () {
+      return this.defaultBlacklistedFields
+    },
   },
 
   methods: {

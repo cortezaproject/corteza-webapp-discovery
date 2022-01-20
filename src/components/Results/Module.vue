@@ -74,10 +74,16 @@ import base from './base'
 export default {
   extends: base,
 
-  data () {
-    return {
-      blacklistedFields: ['created', 'updated', 'meta', 'security', 'fields', 'namespace', 'labels'],
-    }
+  computed: {
+    blacklistedFields () {
+      return [
+        ...this.defaultBlacklistedFields,
+        'meta',
+        'fields',
+        'namespace',
+        'labels',
+      ]
+    },
   },
 }
 </script>
