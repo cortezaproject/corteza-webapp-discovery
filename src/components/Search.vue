@@ -285,10 +285,12 @@ export default {
     },
 
     markerHovered (ID) {
-      document.getElementById(ID).scrollIntoView({
-        behavior: 'smooth',
-        block: 'center',
-      })
+      if (ID) {
+        document.getElementById(ID).scrollIntoView({
+          behavior: 'smooth',
+          block: 'center',
+        })
+      }
 
       this.map.clickedMarker = ID
     },
