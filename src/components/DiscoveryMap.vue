@@ -44,6 +44,27 @@ export default {
     }
   },
 
+  watch: {
+    markers: {
+      immediate: true,
+      handler (markers = []) {
+        if (markers.length) {
+          const { coordinates = [30, 30] } = markers[0]
+          this.center = this.getLatLng(coordinates)
+        }
+      },
+    },
+
+    hoverIndex: {
+      handler (hoverIndex) {
+        if (hoverIndex) {
+          const { coordinates = [30, 30] } = this.markers.find(({ id }) => id === hoverIndex)
+          this.center = this.getLatLng(coordinates)
+        }
+      },
+    },
+  },
+
   methods: {
     getLatLng (coordinates = [0, 0]) {
       return latLng(coordinates[0], coordinates[1])

@@ -7,7 +7,7 @@
       <b-col
         :cols="map.show ? '5' : '12'"
         :lg="map.show ? '6' : '12'"
-        :xl="map.show ? '8' : '12'"
+        :xl="map.show ? '7' : '12'"
         class="h-100 mh-100 p-0"
       >
         <b-form-group class="px-3">
@@ -49,7 +49,7 @@
 
         <h5
           v-if="processing || !numberOfResults"
-          class="d-flex align-items-center justify-content-center"
+          class="d-flex align-items-center justify-content-center mr-2"
           style="height: 65vh;"
         >
           <b-spinner
@@ -76,7 +76,7 @@
               :key="i"
               md="12"
               :lg="map.show ? '12' : '4'"
-              :xl="map.show ? '4' : '3'"
+              :xl="map.show ? '6' : '4'"
               class="py-3"
             >
               <result
@@ -192,7 +192,6 @@ export default {
 
   created () {
     this.initial = true
-    this.getAggregationData()
 
     const { query = '', modules = [], namespaces = [] } = this.$route.query
 
@@ -200,9 +199,7 @@ export default {
     this.$store.commit('updateModules', Array.isArray(modules) ? modules : [modules])
     this.$store.commit('updateNamespaces', Array.isArray(namespaces) ? namespaces : [namespaces])
 
-    if (query || modules.length || namespaces.length) {
-      this.getSearchData(this.query)
-    }
+    this.getSearchData(this.query)
 
     setTimeout(() => {
       this.initial = false
@@ -225,9 +222,7 @@ export default {
           this.hits = response.hits
           if (response.hits) this.getFilteredData()
 
-          if (!modules.length && !namespaces.length) {
-            this.$store.commit('updateAggregations', response.aggregations)
-          }
+          this.$store.commit('updateAggregations', response.aggregations)
 
           this.getMarkers()
           this.processing = false

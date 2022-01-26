@@ -52,6 +52,7 @@ export default {
       return [
         ...this.defaultBlacklistedFields,
         'meta',
+        'namespace',
       ]
     },
   },
