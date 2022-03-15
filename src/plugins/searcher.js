@@ -30,7 +30,7 @@ function stdResolve (response) {
   if (response.data.error) {
     return Promise.reject(response.data.error)
   } else {
-    return response.data
+    return response.data.response
   }
 }
 
