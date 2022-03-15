@@ -10,6 +10,7 @@
       v-if="hit.value.url"
       :href="hit.value.url"
       target="_blank"
+      rel="noopener noreferrer"
       class="stretched-link"
     />
 
