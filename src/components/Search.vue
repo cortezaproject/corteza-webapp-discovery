@@ -96,7 +96,7 @@
         >
           <b-button
             variant="warning"
-            class="ml-auto m-3 rounded-circle p-3"
+            class="rounded-circle p-3"
             @click="toggleMap"
           >
             <font-awesome-icon
@@ -328,8 +328,8 @@ export default {
 }
 
 .map-button {
-  bottom: 0;
-  right: 0;
+  bottom: 1rem;
+  right: 1rem;
   z-index: 99999;
 }
 
