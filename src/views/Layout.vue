@@ -56,8 +56,6 @@
 </template>
 
 <script>
-import icon from '../themes/corteza-base/img/icon.png'
-import logo from '../themes/corteza-base/img/logo.png'
 import Search from '../components/Search.vue'
 import Filters from '../components/Filters.vue'
 import { components } from '@cortezaproject/corteza-vue'
@@ -85,11 +83,11 @@ export default {
     },
 
     icon () {
-      return this.$Settings.attachment('ui.iconLogo', icon)
+      return this.$Settings.attachment('ui.iconLogo')
     },
 
     logo () {
-      return this.$Settings.attachment('ui.mainLogo', logo)
+      return this.$Settings.attachment('ui.mainLogo')
     },
   },
 
