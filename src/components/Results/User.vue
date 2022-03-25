@@ -35,7 +35,12 @@
           {{ name }}
         </label>
         <div class="mt-1">
-          {{ value }}
+          <text-highlight
+            :queries="[$route.query.query]"
+            highlight-style="padding: 0 0.05rem;"
+          >
+            {{ value }}
+          </text-highlight>
         </div>
       </div>
     </b-card-body>

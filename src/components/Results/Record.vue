@@ -64,7 +64,12 @@
             {{ item.label || item.name }}
           </label>
           <p class="multiline mt-1 mb-0">
-            {{ item.value }}
+            <text-highlight
+              :queries="query"
+              highlight-style="padding: 0 0.05rem;"
+            >
+              {{ item.value }}
+            </text-highlight>
           </p>
         </div>
       </div>

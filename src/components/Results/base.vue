@@ -1,5 +1,11 @@
 <script>
+import TextHighlight from 'vue-text-highlight'
+
 export default {
+  components: {
+    TextHighlight,
+  },
+
   props: {
     index: {
       type: Number,
@@ -24,6 +30,10 @@ export default {
   computed: {
     blacklistedFields () {
       return this.defaultBlacklistedFields
+    },
+
+    query () {
+      return this.$route.query.query || ''
     },
   },
 
