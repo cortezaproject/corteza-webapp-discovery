@@ -228,7 +228,7 @@ export default {
           this.processing = false
         }
       })
-        .catch(this.toastErrorHandler(this.$t('notification.search-error')))
+        .catch(this.toastErrorHandler(this.$t('notification:search.failed')))
     },
 
     getFilteredData () {
@@ -261,7 +261,7 @@ export default {
           this.processing = false
         }
       })
-        .catch(this.toastErrorHandler(this.$t('notification.search-error')))
+        .catch(this.toastErrorHandler(this.$t('notification:search.failed')))
     },
 
     getMarkers () {
