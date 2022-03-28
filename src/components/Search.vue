@@ -1,15 +1,33 @@
 <template>
   <b-container
     fluid
-    class="h-100 mh-100 ml-2"
+    class="h-100 mh-100 p-0"
   >
-    <b-row class="mh-100 h-100">
+    <b-row
+      no-gutters
+    >
       <b-col
-        :cols="map.show ? '5' : '12'"
-        :lg="map.show ? '6' : '12'"
-        :xl="map.show ? '7' : '12'"
-        class="h-100 mh-100 p-0"
+        md="12"
+        :lg="map.show ? '7' : '12'"
+        :xl="map.show ? '8' : '12'"
+        style="min-height: 54vh;"
       >
+        <h5
+          v-if="processing || !numberOfResults"
+          class="position-absolute d-flex align-items-center justify-content-center w-100 h-100"
+        >
+          <b-spinner
+            v-if="processing"
+            variant="primary"
+            class="p-4"
+          />
+          <span
+            v-else-if="!numberOfResults"
+          >
+            No results
+          </span>
+        </h5>
+
         <b-form-group class="px-3">
           <b-input-group
             size="lg"
@@ -47,26 +65,10 @@
           </div>
         </b-form-group>
 
-        <h5
-          v-if="processing || !numberOfResults"
-          class="d-flex align-items-center justify-content-center mr-2"
-          style="height: 65vh;"
-        >
-          <b-spinner
-            v-if="processing"
-            variant="primary"
-            class="p-5"
-          />
-          <span
-            v-else-if="!numberOfResults"
-          >
-            No results
-          </span>
-        </h5>
-
         <div
           v-if="filteredHits && !processing"
-          class="results"
+          class="results overflow-auto"
+          :class="{ 'with-map': map.show }"
         >
           <b-row
             class="w-100 m-0 mh-100"
@@ -74,9 +76,9 @@
             <b-col
               v-for="(hit, i) in filteredHits"
               :key="i"
-              md="12"
-              :lg="map.show ? '12' : '4'"
-              :xl="map.show ? '6' : '4'"
+              sm="12"
+              md="6"
+              :lg="map.show ? '6': '4'"
               class="py-3"
             >
               <result
@@ -109,7 +111,9 @@
 
       <b-col
         v-if="map.show"
-        class="p-0"
+        md="12"
+        lg="5"
+        xl="4"
       >
         <discovery-map
           :markers="map.markers"
@@ -217,7 +221,7 @@ export default {
 
       this.updateRouteQuery({ query, modules, namespaces })
 
-      this.$DiscoveryAPI.query({ query, modules, namespaces }).then((response) => {
+      this.$DiscoveryAPI.query({ query, modules, namespaces }).then(response => {
         if (response) {
           this.hits = response.hits
           if (response.hits) this.getFilteredData()
@@ -225,10 +229,12 @@ export default {
           this.$store.commit('updateAggregations', response.aggregations)
 
           this.getMarkers()
-          this.processing = false
         }
       })
         .catch(this.toastErrorHandler(this.$t('notification:search.failed')))
+        .finally(() => {
+          this.processing = false
+        })
     },
 
     getFilteredData () {
@@ -238,30 +244,6 @@ export default {
       } else if (this.hits) {
         this.filteredHits.splice(0, this.filteredHits.length, ...this.hits)
       }
-    },
-
-    getAggregationData () {
-      this.processing = true
-
-      const modules = this.$store.state.modules
-      const namespaces = this.$store.state.namespaces
-
-      if (!this.initial) {
-        this.updateRouteQuery({ query: this.query, modules, namespaces })
-      }
-
-      this.$DiscoveryAPI.query({ modules, namespaces }).then(response => {
-        if (response) {
-          this.hits = response.hits
-          if (response.hits) this.getFilteredData()
-
-          this.$store.commit('updateAggregations', response.aggregations)
-
-          this.getMarkers()
-          this.processing = false
-        }
-      })
-        .catch(this.toastErrorHandler(this.$t('notification:search.failed')))
     },
 
     getMarkers () {
@@ -322,9 +304,17 @@ export default {
 
 <style lang="scss" scoped>
 .results {
-  overflow-y: auto;
-  overflow-x: hidden;
   max-height: calc(100vh - 0.6rem - 1.5rem - 1rem - 4px - 0.25rem - 0.9rem - 1rem - 64px);
+}
+
+.results.with-map {
+  max-height: calc(60vh - 0.6rem - 1.5rem - 1rem - 4px - 0.25rem - 0.9rem - 1rem - 64px);
+}
+
+@media (min-width: 992px) {
+  .results {
+    max-height: calc(100vh - 0.6rem - 1.5rem - 1rem - 4px - 0.25rem - 0.9rem - 1rem - 64px) !important;
+  }
 }
 
 .map-button {

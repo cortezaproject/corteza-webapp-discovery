@@ -58,8 +58,10 @@ export default {
     hoverIndex: {
       handler (hoverIndex) {
         if (hoverIndex) {
-          const { coordinates = [30, 30] } = this.markers.find(({ id }) => id === hoverIndex)
-          this.center = this.getLatLng(coordinates)
+          const { coordinates } = this.markers.find(({ id }) => id === hoverIndex) || {}
+          if (coordinates) {
+            this.center = this.getLatLng(coordinates)
+          }
         }
       },
     },
