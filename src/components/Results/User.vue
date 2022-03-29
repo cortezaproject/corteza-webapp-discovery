@@ -12,9 +12,11 @@
         </h5>
 
         <b-avatar
+          v-b-tooltip.hover
+          title="User"
           size="sm"
-          :title="hit.type"
           class="align-center bg-light text-dark"
+          style="z-index: 1;"
         />
       </div>
 

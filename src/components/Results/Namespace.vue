@@ -11,10 +11,12 @@
           {{ hit.value.name || hit.value.slug }}
         </h5>
         <b-avatar
+          v-b-tooltip.hover
+          title="Namespace"
           size="sm"
-          :title="hit.type"
           icon="code-square"
           class="align-center bg-light text-dark"
+          style="z-index: 1;"
         />
       </div>
       <div class="d-flex justify-content-between small">
