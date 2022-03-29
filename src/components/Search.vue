@@ -10,32 +10,19 @@
         md="12"
         :lg="map.show ? '7' : '12'"
         :xl="map.show ? '8' : '12'"
-        style="min-height: 54vh;"
+        class="results-container"
+        :class="{ 'with-map': map.show }"
       >
-        <h5
-          v-if="processing || !numberOfResults"
-          class="position-absolute d-flex align-items-center justify-content-center w-100 h-100"
-        >
-          <b-spinner
-            v-if="processing"
-            variant="primary"
-            class="p-4"
-          />
-          <span
-            v-else-if="!numberOfResults"
-          >
-            No results
-          </span>
-        </h5>
-
         <b-form-group class="px-3">
           <b-input-group
             size="lg"
           >
             <b-form-input
               v-model="query"
+              :disabled="processing"
               :placeholder="$t('input-placeholder')"
               autocomplete="off"
+              class="bg-white"
             />
             <b-input-group-append>
               <b-button
@@ -58,40 +45,57 @@
           </b-input-group>
 
           <div
-            class="px-1 mt-1 text-muted"
-            :class="{ 'discovering': processing }"
+            class="d-flex align-items-center justify-content-between px-1 mt-1 text-muted"
           >
-            {{ processing ? 'Discovering' : `${numberOfResults} ${$t('search-results')}` }}
+            <span
+              :class="{ 'discovering': processing }"
+            >
+              {{ processing ? 'Discovering' : `${total} ${$t('search-results')}` }}
+            </span>
+            <var>
+              Use <code>"text"</code> for exact match
+            </var>
           </div>
         </b-form-group>
 
-        <div
-          v-if="filteredHits && !processing"
-          class="results overflow-auto"
-          :class="{ 'with-map': map.show }"
+        <h5
+          v-if="processing || !total"
+          class="d-flex align-items-center justify-content-center w-100 h-100"
         >
-          <b-row
-            class="w-100 m-0 mh-100"
+          <b-spinner
+            v-if="processing"
+            variant="primary"
+            class="p-4"
+          />
+          <span
+            v-else-if="!total"
           >
-            <b-col
-              v-for="(hit, i) in filteredHits"
-              :key="i"
-              sm="12"
-              md="6"
-              :lg="map.show ? '6': '4'"
-              class="py-3"
-            >
-              <result
-                :id="hit.value.recordID || hit.value.moduleID"
-                :index="i"
-                :hit="hit"
-                :show-map="map.show"
-                :class="{ 'border-primary border shadow': map.clickedMarker && [hit.value.recordID, hit.value.moduleID].includes(map.clickedMarker) }"
-                @hover="map.hoverIndex = $event"
-              />
-            </b-col>
-          </b-row>
-        </div>
+            No results
+          </span>
+        </h5>
+
+        <b-row
+          v-if="filteredHits && !processing"
+          class="results w-100 m-0 mh-100 overflow-auto"
+        >
+          <b-col
+            v-for="(hit, i) in filteredHits"
+            :key="i"
+            sm="12"
+            md="6"
+            :lg="map.show ? '6': '4'"
+            class="py-3"
+          >
+            <result
+              :id="hit.value.recordID || hit.value.moduleID"
+              :index="i"
+              :hit="hit"
+              :show-map="map.show"
+              :class="{ 'border-primary border shadow': map.clickedMarker && [hit.value.recordID, hit.value.moduleID].includes(map.clickedMarker) }"
+              @hover="map.hoverIndex = $event"
+            />
+          </b-col>
+        </b-row>
 
         <div
           class="position-fixed map-button"
@@ -146,6 +150,7 @@ export default {
 
       hits: [],
       filteredHits: [],
+      total: 0,
 
       initial: false,
       processing: false,
@@ -159,18 +164,12 @@ export default {
     }
   },
 
-  computed: {
-    numberOfResults () {
-      return this.filteredHits.length
-    },
-  },
-
   watch: {
     query: {
       handler: debounce(function (text) {
         if (this.initial) return
         this.getSearchData(text)
-      }, 400),
+      }, 700),
     },
 
     '$store.state.types': {
@@ -221,17 +220,20 @@ export default {
 
       this.updateRouteQuery({ query, modules, namespaces })
 
-      this.$DiscoveryAPI.query({ query, modules, namespaces }).then(response => {
-        if (response) {
-          this.hits = response.hits
-          if (response.hits) this.getFilteredData()
+      this.$DiscoveryAPI.query({ query, modules, namespaces })
+        .then((response = {}) => {
+          if (response) {
+            this.hits = response.hits
+            if (response.hits) this.getFilteredData()
 
-          this.$store.commit('updateAggregations', response.aggregations)
+            const { value = 0 } = response.total || {}
+            this.total = value
 
-          this.getMarkers()
-        }
-      })
-        .catch(this.toastErrorHandler(this.$t('notification:search.failed')))
+            this.$store.commit('updateAggregations', response.aggregations)
+
+            this.getMarkers()
+          }
+        }).catch(this.toastErrorHandler(this.$t('notification:search.failed')))
         .finally(() => {
           this.processing = false
         })
@@ -303,18 +305,24 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-.results {
-  max-height: calc(100vh - 0.6rem - 1.5rem - 1rem - 4px - 0.25rem - 0.9rem - 1rem - 64px);
+.results-container {
+  display: flex;
+  flex-direction: column;
+  height: calc(100vh - 64px);
 }
 
-.results.with-map {
-  max-height: calc(60vh - 0.6rem - 1.5rem - 1rem - 4px - 0.25rem - 0.9rem - 1rem - 64px);
+.results-container.with-map {
+  height: calc(60vh - 64px);
 }
 
 @media (min-width: 992px) {
-  .results {
-    max-height: calc(100vh - 0.6rem - 1.5rem - 1rem - 4px - 0.25rem - 0.9rem - 1rem - 64px) !important;
+  .results-container {
+    height: calc(100vh - 64px) !important;
   }
+}
+
+.results {
+  flex: 1 1 auto;
 }
 
 .map-button {
