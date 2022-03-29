@@ -16,7 +16,10 @@ new Vue({
   store,
   i18n: i18n(Vue,
     { app: 'corteza-webapp-discovery' },
+    'notification',
     'navigation',
+    'filters',
+    'search',
   ),
   render: h => h(App),
 }).$mount('#app')
