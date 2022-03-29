@@ -19,7 +19,7 @@
           >
             <b-form-input
               v-model="query"
-              :disabled="processing"
+              :disabled="$store.state.processing"
               :placeholder="$t('input-placeholder')"
               autocomplete="off"
               class="bg-white"
@@ -48,9 +48,9 @@
             class="d-flex align-items-center justify-content-between px-1 mt-1 text-muted"
           >
             <span
-              :class="{ 'discovering': processing }"
+              :class="{ 'discovering': $store.state.processing }"
             >
-              {{ processing ? 'Discovering' : `${total} ${$t('search-results')}` }}
+              {{ searchDescription }}
             </span>
             <var>
               Use <code>"text"</code> for exact match
@@ -59,23 +59,23 @@
         </b-form-group>
 
         <h5
-          v-if="processing || !total"
+          v-if="$store.state.processing || !total.actual"
           class="d-flex align-items-center justify-content-center w-100 h-100"
         >
           <b-spinner
-            v-if="processing"
+            v-if="$store.state.processing"
             variant="primary"
             class="p-4"
           />
           <span
-            v-else-if="!total"
+            v-else-if="!total.actual"
           >
             No results
           </span>
         </h5>
 
         <b-row
-          v-if="filteredHits && !processing"
+          v-show="filteredHits && !$store.state.processing"
           class="results w-100 m-0 mh-100 overflow-auto"
         >
           <b-col
@@ -150,10 +150,13 @@ export default {
 
       hits: [],
       filteredHits: [],
-      total: 0,
+
+      total: {
+        all: 0,
+        actual: 0,
+      },
 
       initial: false,
-      processing: false,
 
       map: {
         show: false,
@@ -162,6 +165,20 @@ export default {
         hoverIndex: undefined,
       },
     }
+  },
+
+  computed: {
+    searchDescription () {
+      if (this.$store.state.processing) {
+        return 'Discovering'
+      }
+
+      if (this.filteredHits.length) {
+        return `Showing ${this.total.actual} of ${this.total.all} results`
+      }
+
+      return ''
+    },
   },
 
   watch: {
@@ -179,17 +196,17 @@ export default {
     },
 
     '$store.state.modules': {
-      handler: debounce(function () {
+      handler () {
         if (this.initial) return
         this.getSearchData(this.query)
-      }, 400),
+      },
     },
 
     '$store.state.namespaces': {
-      handler: debounce(function () {
+      handler () {
         if (this.initial) return
         this.getSearchData(this.query)
-      }, 400),
+      },
     },
   },
 
@@ -211,7 +228,7 @@ export default {
 
   methods: {
     getSearchData (query = '') {
-      this.processing = true
+      this.$store.commit('updateProcessing', true)
 
       this.deleteStates()
 
@@ -223,11 +240,11 @@ export default {
       this.$DiscoveryAPI.query({ query, modules, namespaces })
         .then((response = {}) => {
           if (response) {
-            this.hits = response.hits
-            if (response.hits) this.getFilteredData()
+            this.hits = (response.hits || []).slice(0, 100)
+            this.getFilteredData()
 
             const { value = 0 } = response.total || {}
-            this.total = value
+            this.total.all = value
 
             this.$store.commit('updateAggregations', response.aggregations)
 
@@ -235,17 +252,19 @@ export default {
           }
         }).catch(this.toastErrorHandler(this.$t('notification:search.failed')))
         .finally(() => {
-          this.processing = false
+          this.$store.commit('updateProcessing', false)
         })
     },
 
     getFilteredData () {
-      if (this.$store.state.types.length > 0 && this.hits) {
-        const results = this.hits.filter(hit => this.$store.state.types.includes(hit.type))
-        this.filteredHits.splice(0, this.filteredHits.length, ...results)
-      } else if (this.hits) {
-        this.filteredHits.splice(0, this.filteredHits.length, ...this.hits)
+      let filteredHits = this.hits
+
+      if (this.$store.state.types.length > 0 && this.hits.length) {
+        filteredHits = this.hits.filter(hit => this.$store.state.types.includes(hit.type))
       }
+
+      this.filteredHits.splice(0, this.filteredHits.length, ...filteredHits)
+      this.total.actual = this.filteredHits.length
     },
 
     getMarkers () {
@@ -286,7 +305,7 @@ export default {
     },
 
     deleteStates () {
-      this.hits = null
+      this.hits = []
       this.map.markers = []
       this.filteredHits.splice(0, this.filteredHits.length)
     },

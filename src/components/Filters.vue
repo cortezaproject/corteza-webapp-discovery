@@ -7,6 +7,7 @@
       <b-form-checkbox-group
         v-model="types"
         name="types"
+        :disabled="$store.state.processing"
         stacked
         class="mt-1"
         @change="updateTypes()"
@@ -28,67 +29,67 @@
       </b-form-checkbox-group>
     </div>
 
-    <div v-if="this.$store.state.aggregations.length">
+    <div
+      v-for="agg in aggregationOptions"
+      :key="agg.resource"
+      class="mt-4"
+    >
       <div
-        v-for="(agg, index) in this.$store.state.aggregations"
-        :key="index"
-        class="mt-4"
+        v-if="agg.items.length"
+        class="d-flex justify-content-between align-items-center"
+        style="min-height: 25px;"
       >
-        <div
-          class="d-flex justify-content-between align-items-center"
-          style="min-height: 25px;"
+        <h6
+          class="text-primary d-flex mb-0"
         >
-          <h6
-            class="text-primary d-flex mb-0"
+          {{ agg.name }}
+          <b-badge
+            v-if="groups[agg.name].length"
+            variant="dark"
+            pill
+            class="ml-1 align-self-center"
           >
-            {{ agg.name }}
-            <b-badge
-              v-if="(groups[agg.name] || []).length"
-              variant="dark"
-              pill
-              class="ml-1 align-self-center"
-            >
-              {{ (groups[agg.name] || []).length }}
-            </b-badge>
-          </h6>
-          <b-button
-            v-if="(groups[agg.name] || []).length"
-            variant="link"
-            class="text-muted p-0 m-0"
-            size="sm"
-            @click="clearGroup(agg.name)"
-          >
-            Reset
-          </b-button>
-        </div>
-
-        <b-form-checkbox-group
-          v-model="groups[agg.name]"
-          stacked
-          class="mt-1 ml-2"
-          @change="updateGroup(agg.name)"
+            {{ groups[agg.name].length }}
+          </b-badge>
+        </h6>
+        <b-button
+          v-if="groups[agg.name].length"
+          variant="link"
+          class="text-muted p-0 m-0"
+          size="sm"
+          @click="clearGroup(agg.name)"
         >
-          <b-form-checkbox
-            v-for="(resource, i) in agg.resource_name"
-            :key="i"
-            :value="resource.name"
-            class="mb-1"
-          >
-            <div
-              class="d-flex align-items-center"
-            >
-              <span class="d-inline-block text-truncate">
-                {{ getResourceDisplayName(agg.resource, resource) }}
-              </span>
-              <span
-                class="pl-3 ml-auto text-muted"
-              >
-                {{ resource.hits }}
-              </span>
-            </div>
-          </b-form-checkbox>
-        </b-form-checkbox-group>
+          Reset
+        </b-button>
       </div>
+
+      <b-form-checkbox-group
+        v-model="groups[agg.name]"
+        stacked
+        class="mt-1 ml-2"
+        :disabled="$store.state.processing"
+        @change="updateGroup(agg.name)"
+      >
+        <b-form-checkbox
+          v-for="(resource, i) in agg.items"
+          :key="i"
+          :value="resource.name"
+          class="mb-1"
+        >
+          <div
+            class="d-flex align-items-center"
+          >
+            <span class="d-inline-block text-truncate">
+              {{ getResourceDisplayName(agg.resource, resource) }}
+            </span>
+            <span
+              class="pl-3 ml-auto text-muted"
+            >
+              {{ resource.hits }}
+            </span>
+          </div>
+        </b-form-checkbox>
+      </b-form-checkbox-group>
     </div>
   </div>
 </template>
@@ -118,19 +119,47 @@ export default {
         { text: this.$t('types.user'), value: 'system:user' },
       ]
     },
+
+    aggregationOptions () {
+      let namespaceOptions = this.$store.state.aggregations.find(({ resource }) => resource === 'compose:namespace') || {}
+      let moduleOptions = this.$store.state.aggregations.find(({ resource }) => resource === 'compose:module') || {}
+
+      namespaceOptions = {
+        resource: 'compose:namespace',
+        name: 'Namespace',
+        hits: namespaceOptions.hits || 0,
+        items: namespaceOptions.resource_name || [],
+      }
+
+      // Get all modules that are missing from store aggregations but are in filter
+      const missingModuleOptions = this.groups.Module.filter(name => !(moduleOptions.resource_name || []).some(o => o.name === name))
+        .map(name => ({ name }))
+
+      moduleOptions = {
+        resource: 'compose:module',
+        name: 'Module',
+        hits: moduleOptions.hits || 0,
+        items: [
+          ...missingModuleOptions,
+          ...(moduleOptions.resource_name || []),
+        ],
+      }
+
+      return [namespaceOptions, moduleOptions]
+    },
   },
 
   watch: {
     '$store.state.namespaces': {
       immediate: true,
-      handler: function (namespace) {
+      handler (namespace) {
         this.groups.Namespace = namespace
       },
     },
 
     '$store.state.modules': {
       immediate: true,
-      handler: function (module) {
+      handler (module) {
         this.groups.Module = module
       },
     },
