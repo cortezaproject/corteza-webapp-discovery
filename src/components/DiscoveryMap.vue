@@ -3,6 +3,7 @@
     :zoom="zoom"
     :center="center"
     style="height: calc(100vh - 64px);"
+    @click="clearClickedMarker()"
   >
     <l-tile-layer
       url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
@@ -12,9 +13,8 @@
       v-for="(marker, i) in markers"
       :key="i"
       :lat-lng="getLatLng(marker.coordinates)"
-      :opacity="[hoverIndex, hoveredMarker].includes(marker.id) ? 1.0 : 0.6"
-      @mouseover="onMarkerMouseOver(marker.id)"
-      @mouseleave="onMarkerMouseLeave(marker.id)"
+      :opacity="[hoverIndex, clickedMarker].includes(marker.id) ? 1.0 : 0.6"
+      @click="onMarkerClick(marker.id)"
     />
   </l-map>
 </template>
@@ -40,7 +40,7 @@ export default {
       center: [30, 30],
       rotation: 0,
       attribution: '&copy; <a target="_blank" rel="noopener noreferrer" href="http://osm.org/copyright">OpenStreetMap</a>',
-      hoveredMarker: undefined,
+      clickedMarker: undefined,
     }
   },
 
@@ -72,14 +72,14 @@ export default {
       return latLng(coordinates[0], coordinates[1])
     },
 
-    onMarkerMouseOver (ID) {
-      this.hoveredMarker = ID
-      this.$emit('hover', this.hoveredMarker)
+    onMarkerClick (ID) {
+      this.clickedMarker = ID
+      this.$emit('hover', this.clickedMarker)
     },
 
-    onMarkerMouseLeave () {
-      this.hoveredMarker = undefined
-      this.$emit('hover', this.hoveredMarker)
+    clearClickedMarker () {
+      this.clickedMarker = undefined
+      this.$emit('hover', this.clickedMarker)
     },
   },
 }
