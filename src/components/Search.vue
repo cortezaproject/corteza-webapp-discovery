@@ -13,50 +13,61 @@
         class="results-container"
         :class="{ 'with-map': map.show }"
       >
-        <b-form-group class="px-3">
-          <b-input-group
-            size="lg"
-          >
-            <b-form-input
-              v-model="query"
-              :disabled="$store.state.processing"
-              :placeholder="$t('input-placeholder')"
-              autocomplete="off"
-              class="bg-white"
-            />
-            <b-input-group-append>
-              <b-button
-                v-if="query"
-                variant="link"
-                class="bg-white border-left-0"
-                style="border: 2px solid #E4E9EF;"
-                @click="query = ''"
-              >
-                <font-awesome-icon
-                  :icon="['fas', 'times']"
-                />
-              </b-button>
-              <b-input-group-text class="text-primary bg-white">
-                <font-awesome-icon
-                  :icon="['fas', 'search']"
-                />
-              </b-input-group-text>
-            </b-input-group-append>
-          </b-input-group>
-
-          <div
-            class="d-flex align-items-center justify-content-between px-1 mt-1 text-muted"
-          >
-            <span
-              :class="{ 'discovering': $store.state.processing }"
+        <b-form
+          @submit.prevent="onQuerySubmit()"
+        >
+          <b-form-group class="px-3">
+            <b-input-group
+              size="lg"
             >
-              {{ searchDescription }}
-            </span>
-            <var>
-              Use <code>"text"</code> for exact match
-            </var>
-          </div>
-        </b-form-group>
+              <b-form-input
+                ref="query"
+                v-model="query"
+                :placeholder="$t('input-placeholder')"
+                autocomplete="off"
+              />
+              <b-input-group-append>
+                <b-button
+                  v-if="query"
+                  variant="link"
+                  class="clear-query position-absolute text-secondary border-0"
+                  @click="clearQuery()"
+                >
+                  <font-awesome-icon
+                    :icon="['fas', 'times']"
+                  />
+                </b-button>
+                <b-button
+                  variant="link"
+                  class="bg-white"
+                  style="border: 2px solid #E4E9EF;"
+                  @click="onQuerySubmit()"
+                >
+                  <font-awesome-icon
+                    :icon="['fas', 'search']"
+                  />
+                </b-button>
+                <input
+                  type="submit"
+                  hidden
+                >
+              </b-input-group-append>
+            </b-input-group>
+
+            <div
+              class="d-flex align-items-center justify-content-between px-1 mt-1 text-muted"
+            >
+              <span
+                :class="{ 'discovering': $store.state.processing }"
+              >
+                {{ searchDescription }}
+              </span>
+              <span>
+                Use <samp>"text"</samp> for exact match
+              </span>
+            </div>
+          </b-form-group>
+        </b-form>
 
         <h5
           v-if="$store.state.processing || !total.actual"
@@ -131,7 +142,6 @@
 
 <script>
 import Result from './Results'
-import { debounce } from 'lodash'
 import DiscoveryMap from './DiscoveryMap.vue'
 
 export default {
@@ -173,7 +183,7 @@ export default {
         return 'Discovering'
       }
 
-      if (this.filteredHits.length) {
+      if (this.total.all > 0) {
         return `Showing ${this.total.actual} of ${this.total.all} results`
       }
 
@@ -182,12 +192,6 @@ export default {
   },
 
   watch: {
-    query: {
-      handler: debounce(function (text) {
-        if (this.initial) return
-        this.getSearchData(text)
-      }, 700),
-    },
 
     '$store.state.types': {
       handler: function () {
@@ -267,6 +271,17 @@ export default {
       this.total.actual = this.filteredHits.length
     },
 
+    onQuerySubmit () {
+      if (!this.$store.state.processing) {
+        this.getSearchData(this.query)
+      }
+    },
+
+    clearQuery () {
+      this.query = ''
+      this.$refs.query.focus()
+    },
+
     getMarkers () {
       const markers = []
 
@@ -342,6 +357,12 @@ export default {
 
 .results {
   flex: 1 1 auto;
+}
+
+.clear-query {
+  z-index: 3 !important;
+  right: 52px;
+  top: 2px;
 }
 
 .map-button {
