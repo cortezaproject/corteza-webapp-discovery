@@ -94,11 +94,19 @@ class Searcher {
     const {
       modules,
       namespaces,
+      from,
+      size,
     } = a || {}
 
     const params = new URLSearchParams()
+
+    // Filter
     if (modules?.length > 0) modules.forEach(m => params.append('moduleAggs', m))
     if (namespaces?.length > 0) namespaces.forEach(n => params.append('namespaceAggs', n))
+
+    // Pagination
+    if (from) params.append('from', from)
+    if (size) params.append('size', size)
 
     const cfg = {
       ...extra,

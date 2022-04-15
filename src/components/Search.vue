@@ -69,26 +69,29 @@
           </b-form-group>
         </b-form>
 
-        <h5
-          v-if="$store.state.processing || !total.actual"
-          class="d-flex align-items-center justify-content-center w-100 h-100"
-        >
-          <b-spinner
-            v-if="$store.state.processing"
-            variant="primary"
-            class="p-4"
-          />
-          <span
-            v-else-if="!total.actual"
-          >
-            No results
-          </span>
-        </h5>
-
         <b-row
-          v-show="filteredHits && !$store.state.processing"
           class="results w-100 m-0 mh-100 overflow-auto"
         >
+          <div
+            v-if="$store.state.processing || !total.actual"
+            class="position-absolute d-flex align-items-center justify-content-center w-100 h-100"
+            style="opacity: 0.8; z-index: 1; background-color: #F3F3F5;"
+          >
+            <h5
+              class="mb-5"
+            >
+              <b-spinner
+                v-if="$store.state.processing"
+                variant="primary"
+                class="p-4"
+              />
+              <span
+                v-else-if="!total.actual"
+              >
+                No results
+              </span>
+            </h5>
+          </div>
           <b-col
             v-for="(hit, i) in filteredHits"
             :key="i"
@@ -161,6 +164,12 @@ export default {
       hits: [],
       filteredHits: [],
 
+      pagination: {
+        limit: 50,
+        from: 0,
+        size: 0,
+      },
+
       total: {
         all: 0,
         actual: 0,
@@ -192,7 +201,6 @@ export default {
   },
 
   watch: {
-
     '$store.state.types': {
       handler: function () {
         this.getFilteredData()
@@ -202,6 +210,7 @@ export default {
     '$store.state.modules': {
       handler () {
         if (this.initial) return
+        this.pagination.size = this.pagination.limit
         this.getSearchData(this.query)
       },
     },
@@ -209,6 +218,7 @@ export default {
     '$store.state.namespaces': {
       handler () {
         if (this.initial) return
+        this.pagination.size = this.pagination.limit
         this.getSearchData(this.query)
       },
     },
@@ -217,9 +227,11 @@ export default {
   created () {
     this.initial = true
 
-    const { query = '', modules = [], namespaces = [] } = this.$route.query
+    const { query = '', modules = [], namespaces = [], size = 0 } = this.$route.query
 
     this.query = query
+    this.pagination.size = size
+
     this.$store.commit('updateModules', Array.isArray(modules) ? modules : [modules])
     this.$store.commit('updateNamespaces', Array.isArray(namespaces) ? namespaces : [namespaces])
 
@@ -230,31 +242,62 @@ export default {
     }, 1000)
   },
 
+  mounted () {
+    const listElm = document.querySelector('.results')
+    listElm.addEventListener('scroll', e => {
+      if (listElm.scrollTop + listElm.clientHeight >= listElm.scrollHeight) {
+        if (!this.$store.state.processing && this.total.actual < this.total.all) {
+          this.getSearchData(this.query, true)
+        }
+      }
+    })
+  },
+
   methods: {
-    getSearchData (query = '') {
+    getSearchData (query = '', append = false) {
       this.$store.commit('updateProcessing', true)
 
-      this.deleteStates()
+      if (!append) {
+        this.map.markers = []
+      }
 
+      // Filters
       const modules = this.$store.state.modules
       const namespaces = this.$store.state.namespaces
 
-      this.updateRouteQuery({ query, modules, namespaces })
+      // Pagination
+      if (append) {
+        this.pagination.size += this.pagination.limit
+      }
 
-      this.$DiscoveryAPI.query({ query, modules, namespaces })
+      const { size } = this.pagination
+
+      this.updateRouteQuery({ query, modules, namespaces, size })
+
+      this.$DiscoveryAPI.query({ query, modules, namespaces, size })
         .then((response = {}) => {
           if (response) {
-            this.hits = (response.hits || []).slice(0, 100)
+            this.hits = (response.hits || [])
+
+            this.total.all = response.total_results || 0
+
             this.getFilteredData()
 
-            const { value = 0 } = response.total || {}
-            this.total.all = value
+            this.pagination = {
+              ...this.pagination,
+              from: response.from || 0,
+              size: response.size || 0,
+            }
 
             this.$store.commit('updateAggregations', response.aggregations)
 
             this.getMarkers()
           }
-        }).catch(this.toastErrorHandler(this.$t('notification:search.failed')))
+        }).catch(e => {
+          this.toastErrorHandler(this.$t('notification:search.failed'))(e)
+          this.hits = []
+          this.filteredHits.splice(0, this.filteredHits.length)
+        })
         .finally(() => {
           this.$store.commit('updateProcessing', false)
         })
@@ -273,6 +316,7 @@ export default {
 
     onQuerySubmit () {
       if (!this.$store.state.processing) {
+        this.pagination.size = this.pagination.limit
         this.getSearchData(this.query)
       }
     },
@@ -319,19 +363,13 @@ export default {
       this.map.clickedMarker = ID
     },
 
-    deleteStates () {
-      this.hits = []
-      this.map.markers = []
-      this.filteredHits.splice(0, this.filteredHits.length)
-    },
-
     toggleMap () {
       this.map.show = !this.map.show
     },
 
-    updateRouteQuery ({ query = undefined, modules = [], namespaces = [] }) {
+    updateRouteQuery ({ query = undefined, modules = [], namespaces = [], size = 0 }) {
       if (JSON.stringify(this.$route.query) !== JSON.stringify({ query, modules, namespaces })) {
-        this.$router.push({ query: { query: query || undefined, modules, namespaces } })
+        this.$router.push({ query: { query: query || undefined, modules, namespaces, size } })
       }
     },
   },
