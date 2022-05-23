@@ -245,7 +245,7 @@ export default {
   mounted () {
     const listElm = document.querySelector('.results')
     listElm.addEventListener('scroll', e => {
-      if (listElm.scrollTop + listElm.clientHeight >= listElm.scrollHeight) {
+      if (listElm.scrollTop + listElm.clientHeight >= listElm.scrollHeight - 10) {
         if (!this.$store.state.processing && this.total.actual < this.total.all) {
           this.getSearchData(this.query, true)
         }
