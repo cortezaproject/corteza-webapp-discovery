@@ -17,42 +17,13 @@
           @submit.prevent="onQuerySubmit()"
         >
           <b-form-group class="px-3">
-            <b-input-group
-              size="lg"
-            >
-              <b-form-input
-                ref="query"
-                v-model="query"
-                :placeholder="$t('input-placeholder')"
-                autocomplete="off"
-              />
-              <b-input-group-append>
-                <b-button
-                  v-if="query"
-                  variant="link"
-                  class="clear-query position-absolute text-secondary border-0"
-                  @click="clearQuery()"
-                >
-                  <font-awesome-icon
-                    :icon="['fas', 'times']"
-                  />
-                </b-button>
-                <b-button
-                  variant="link"
-                  class="bg-white"
-                  style="border: 2px solid #E4E9EF;"
-                  @click="onQuerySubmit()"
-                >
-                  <font-awesome-icon
-                    :icon="['fas', 'search']"
-                  />
-                </b-button>
-                <input
-                  type="submit"
-                  hidden
-                >
-              </b-input-group-append>
-            </b-input-group>
+            <c-input-search
+              v-model="query"
+              :placeholder="$t('input-placeholder')"
+              :autocomplete="'off'"
+              submittable
+              @search="onQuerySubmit()"
+            />
 
             <div
               class="d-flex align-items-center justify-content-between px-1 mt-1 text-muted"
@@ -146,6 +117,8 @@
 <script>
 import Result from './Results'
 import DiscoveryMap from './DiscoveryMap.vue'
+import { components } from '@cortezaproject/corteza-vue'
+const { CInputSearch } = components
 
 export default {
   i18nOptions: {
@@ -155,6 +128,7 @@ export default {
   components: {
     Result,
     DiscoveryMap,
+    CInputSearch,
   },
 
   data () {
@@ -319,11 +293,6 @@ export default {
         this.pagination.size = this.pagination.limit
         this.getSearchData(this.query)
       }
-    },
-
-    clearQuery () {
-      this.query = ''
-      this.$refs.query.focus()
     },
 
     getMarkers () {
