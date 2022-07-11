@@ -88,6 +88,7 @@
           <b-button
             variant="warning"
             class="rounded-circle p-3"
+            :title="$t('tooltip.map')"
             @click="toggleMap"
           >
             <font-awesome-icon
