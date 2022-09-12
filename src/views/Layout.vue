@@ -5,18 +5,18 @@
         :sidebar-pinned="pinned"
         :settings="$Settings.get('ui.topbar', {})"
         :labels="{
-          helpForum: $t('navigation:help.forum'),
-          helpDocumentation: $t('navigation:help.documentation'),
-          helpFeedback: $t('navigation:help.feedback'),
-          helpVersion: $t('navigation:help.version'),
-          userSettingsLoggedInAs: $t('navigation:userSettings.loggedInAs', { user }),
-          userSettingsProfile: $t('navigation:userSettings.profile'),
-          userSettingsChangePassword: $t('navigation:userSettings.changePassword'),
-          userSettingsLogout: $t('navigation:userSettings.logout'),
+          helpForum: $t('help.forum'),
+          helpDocumentation: $t('help.documentation'),
+          helpFeedback: $t('help.feedback'),
+          helpVersion: $t('help.version'),
+          userSettingsLoggedInAs: $t('userSettings.loggedInAs', { user }),
+          userSettingsProfile: $t('userSettings.profile'),
+          userSettingsChangePassword: $t('userSettings.changePassword'),
+          userSettingsLogout: $t('userSettings.logout'),
         }"
       >
         <template #title>
-          Discovery
+          {{ $t('discovery') }}
         </template>
       </c-topbar>
     </header>
@@ -62,6 +62,10 @@ import { components } from '@cortezaproject/corteza-vue'
 const { CTopbar, CSidebar } = components
 
 export default {
+  i18nOptions: {
+    namespaces: 'navigation',
+  },
+
   components: {
     CTopbar,
     CSidebar,

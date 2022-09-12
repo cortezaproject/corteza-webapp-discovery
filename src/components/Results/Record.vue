@@ -33,11 +33,11 @@
             variant="light"
             class="mr-1 h5 p-2 mb-0"
           >
-            Federated
+            {{ $t('general:federated') }}
           </b-badge>
           <b-avatar
             v-b-tooltip.hover
-            title="Record"
+            title="$t('filters:types.record')"
             size="sm"
             icon="file-earmark-text"
             class="align-center bg-light text-dark"
@@ -79,7 +79,7 @@
       <p
         v-else
       >
-        No values
+        {{ $t('general:no-values') }}
       </p>
     </b-card-body>
   </b-overlay>

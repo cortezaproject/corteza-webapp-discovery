@@ -8,12 +8,12 @@
         <h5
           class="text-primary text-capitalize text-truncate mr-2 mb-0"
         >
-          User
+          $t('types.user')
         </h5>
 
         <b-avatar
           v-b-tooltip.hover
-          title="User"
+          title="$t('types.user')"
           size="sm"
           class="align-center bg-light text-dark"
           style="z-index: 1;"
@@ -53,6 +53,10 @@
 import base from './base'
 
 export default {
+  i18nOptions: {
+    namespaces: 'filters',
+  },
+
   extends: base,
 
   computed: {

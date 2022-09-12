@@ -12,7 +12,7 @@
         </h5>
         <b-avatar
           v-b-tooltip.hover
-          title="Namespace"
+          title="$t('types.namespace')"
           size="sm"
           icon="code-square"
           class="align-center bg-light text-dark"
@@ -52,6 +52,10 @@
 import base from './base'
 
 export default {
+  i18nOptions: {
+    namespaces: 'filters',
+  },
+
   extends: base,
 
   computed: {

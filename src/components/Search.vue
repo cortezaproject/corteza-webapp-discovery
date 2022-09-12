@@ -59,7 +59,7 @@
               <span
                 v-else-if="!total.actual"
               >
-                No results
+                {{ $t('no-results') }}
               </span>
             </h5>
           </div>
@@ -164,11 +164,11 @@ export default {
   computed: {
     searchDescription () {
       if (this.$store.state.processing) {
-        return 'Discovering'
+        return this.$t('discovering')
       }
 
       if (this.total.all > 0) {
-        return `Showing ${this.total.actual} of ${this.total.all} results`
+        return this.$t('range', { actual: this.total.actual, all: this.total.all })
       }
 
       return ''
