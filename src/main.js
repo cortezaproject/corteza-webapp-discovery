@@ -16,6 +16,7 @@ new Vue({
   store,
   i18n: i18n(Vue,
     { app: 'corteza-webapp-discovery' },
+    'general',
     'notification',
     'navigation',
     'filters',

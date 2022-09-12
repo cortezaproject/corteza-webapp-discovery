@@ -33,11 +33,11 @@
             variant="light"
             class="mr-1 h5 p-2 mb-0"
           >
-            Federated
+            {{ $t('general:federated') }}
           </b-badge>
           <b-avatar
             v-b-tooltip.hover
-            title="Module"
+            :title="$t('types.module')"
             size="sm"
             icon="list-ul"
             class="align-center bg-light text-dark"
@@ -79,6 +79,10 @@
 import base from './base'
 
 export default {
+  i18nOptions: {
+    namespaces: 'filters',
+  },
+
   extends: base,
 
   computed: {

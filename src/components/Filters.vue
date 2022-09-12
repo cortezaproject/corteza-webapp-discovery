@@ -59,7 +59,7 @@
           size="sm"
           @click="clearGroup(agg.name)"
         >
-          Reset
+          {{ $t('reset') }}
         </b-button>
       </div>
 
