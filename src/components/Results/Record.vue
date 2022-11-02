@@ -37,7 +37,7 @@
           </b-badge>
           <b-avatar
             v-b-tooltip.hover
-            title="$t('filters:types.record')"
+            :title="$t('filters:types.record')"
             size="sm"
             icon="file-earmark-text"
             class="align-center bg-light text-dark"
