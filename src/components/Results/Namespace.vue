@@ -12,7 +12,7 @@
         </h5>
         <b-avatar
           v-b-tooltip.hover
-          title="$t('types.namespace')"
+          :title="$t('types.namespace')"
           size="sm"
           icon="code-square"
           class="align-center bg-light text-dark"

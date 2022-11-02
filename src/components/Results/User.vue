@@ -8,12 +8,12 @@
         <h5
           class="text-primary text-capitalize text-truncate mr-2 mb-0"
         >
-          $t('types.user')
+          {{ $t('types.user') }}
         </h5>
 
         <b-avatar
           v-b-tooltip.hover
-          title="$t('types.user')"
+          :title="$t('types.user')"
           size="sm"
           class="align-center bg-light text-dark"
           style="z-index: 1;"
