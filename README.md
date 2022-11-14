@@ -1,3 +1,12 @@
+<h1>This repository is now archived</h1>
+
+In November 2022 we merged multiple Corteza repositories into a single code base ([github.com/cortezaproject/mono](https://github.com/cortezaproject/corteza)).
+This repository is now archived.
+
+More information in GitHub [discussions](https://github.com/orgs/cortezaproject/discussions/437).
+
+----
+
 <h1 align="center">
   <img width="300px" src=".github/assets/corteza_logo.svg" />
   <br />
